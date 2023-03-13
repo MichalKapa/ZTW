@@ -1,0 +1,11 @@
+$colorBlack: #0c0a3e; 
+$colorPurple: #7b1e7a; 
+$colorRed: #b33f62;
+$colorOrange: #f9564f;
+$colorYellow: #f3c677;
+
+@mixin round_border {
+    border-radius: 20px;
+    border-width: 0.5px;
+    box-shadow: 0.5px 0.5px 5px white;
+}
