@@ -1,0 +1,56 @@
+%windows_shared { 
+    background-color: #990000;
+    width: 25%;
+    padding: 50px;
+    @include round_border;
+
+
+
+    h2 {
+        font-size: 50px;
+        color: white;
+    }
+
+    p {
+        font-size: 35px;
+        color: white;
+    }
+}
+
+.windows_wrapper {
+    display: flex;
+    width: 100%;
+    margin-top: 200px;
+    justify-content: space-around;
+}
+
+.windows_red {
+    @extend %windows_shared; 
+
+}
+
+.windows_green {
+    @extend %windows_shared; 
+    background-color: #009900;
+
+    h2 {
+        font-size: 50px;
+    }
+
+    p {
+        font-size: 35px;
+    }
+}
+
+.windows_blue {
+    @extend %windows_shared; 
+    background-color: #000099;
+
+    h2 {
+        font-size: 50px;
+    }
+
+    p {
+        font-size: 35px;
+    }
+}

@@ -2,7 +2,6 @@
   background-image: url("../../images/kotki.jpeg");
   background-size: 100%;
   background-repeat: no-repeat;
-  height: 2000px;
 }
 .homepage h1 {
   font-size: 70px;
@@ -100,6 +99,50 @@
   font-weight: bold;
   padding: 20px;
   line-height: 40px;
+}
+
+.windows_blue, .windows_green, .windows_red {
+  background-color: #990000;
+  width: 25%;
+  padding: 50px;
+  border-radius: 20px;
+  border-width: 0.5px;
+  box-shadow: 0.5px 0.5px 5px white;
+}
+.windows_blue h2, .windows_green h2, .windows_red h2 {
+  font-size: 50px;
+  color: white;
+}
+.windows_blue p, .windows_green p, .windows_red p {
+  font-size: 35px;
+  color: white;
+}
+
+.windows_wrapper {
+  display: flex;
+  width: 100%;
+  margin-top: 200px;
+  justify-content: space-around;
+}
+
+.windows_green {
+  background-color: #009900;
+}
+.windows_green h2 {
+  font-size: 50px;
+}
+.windows_green p {
+  font-size: 35px;
+}
+
+.windows_blue {
+  background-color: #000099;
+}
+.windows_blue h2 {
+  font-size: 50px;
+}
+.windows_blue p {
+  font-size: 35px;
 }
 
 /*# sourceMappingURL=main.css.map */
