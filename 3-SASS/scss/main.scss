@@ -2,4 +2,10 @@
 @import "./pages/home";
 @import "./pages/gallery";
 @import "./pages/contact";
-@import "./layout/header"
+@import "./layout/header";
+
+body {
+    font-family: Tahoma;
+    font-weight: 500;
+    font-variant: small-caps;
+}

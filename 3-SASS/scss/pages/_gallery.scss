@@ -10,7 +10,7 @@
 }  
 
 .gallery_img_wrapper {
-  width: 60%;
+  width: calc(1080px / 1920px * 100%);
   display: flex;
 }
 

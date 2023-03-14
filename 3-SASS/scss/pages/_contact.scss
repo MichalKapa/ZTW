@@ -1,3 +1,8 @@
+@function complementary($color, $amount: 100%) {
+    $inverse: change-color($color, $hue: hue($color) + 120);
+    @return mix($inverse, $color, $amount);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -7,14 +12,56 @@
 .contact_html {
     height: 100%;
     background-color: white;
-    background-image: url("../../images/kotki.jpeg");
     background-size: 100% auto;
     background-position: top center;
     background-attachment: fixed;
 }
   
 .contact_body {
-    background-image: linear-gradient(hsl(265, 84%, 45%), transparent 90%);
+    background-image: linear-gradient(hsl(81, 60%, 52%), transparent 90%);
     background-size: 100% 100%;
-    mix-blend-mode: difference;
+}
+
+.contact_container {
+    display: grid;
+    width: 100%;
+    height: inherit;
+}
+
+.contact_boxes {
+    display: flex;
+    flex-direction: row;
+    justify-self: center;
+    width: calc(1280px/1920px*100%);
+}
+
+%contact_box {
+    width: 240px;
+    border: 4px solid #000;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    margin-top: 120px;
+    padding: 20px;
+}
+
+.contact_box_left {
+    @extend %contact_box;
+    background-color: complementary($colorOrange, 80%);
+    border-color: $colorOrange;
+}
+
+.contact_box_right {
+    @extend %contact_box;
+    background-color: complementary($colorPurple, 60%);
+    border-color: $colorPurple;
+}
+
+footer {
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+    align-self: flex-end;
+    color: $colorOrange;
 }

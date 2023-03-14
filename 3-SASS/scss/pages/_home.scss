@@ -1,5 +1,8 @@
+@use "../helpers/variables";
+
 .homepage {
-    background-image: url("../../images/kotki.jpeg");
+    // @extend font-standard;
+    background-image: url("../images/kotki.jpeg");
     background-size: 100%;
     background-repeat: no-repeat;
     // background-color: $colorPurple;

@@ -4,6 +4,12 @@ $colorRed: #b33f62;
 $colorOrange: #f9564f;
 $colorYellow: #f3c677;
 
+%font-standard {
+    font-family: Tahoma;
+    font-weight: 500;
+    font-variant: small-caps; 
+}
+
 @mixin round_border {
     border-radius: 20px;
     border-width: 0.5px;
