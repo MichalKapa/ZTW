@@ -1,170 +1,313 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <meta http-equiv="x-ua-compatible" content="ie=edge" />
-  <title>Podróże</title>
-  <!-- MDB icon -->
-  <link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
-  <!-- Google Fonts Roboto -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
-  <!-- Bootstrap core CSS -->
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <!-- Material Design Bootstrap -->
-  <link rel="stylesheet" href="css/mdb.min.css">
-  <!-- Your custom styles (optional) -->
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-
-  <!-- ------------------------------------------------------------- NAVBAR ------------------------------------------------------------- -->
-
-  <nav class="navbar navbar-expand-lg navbar-dark bg-secondary fixed-top">
-    <a class="navbar-brand" href="#">Blog podróżniczy</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
-      aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Material Design for Bootstrap</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/
+bootstrap.min.css" integrity="sha384-
+Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="an
+onymous">
+    <!-- MDB icon -->
+    <link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+    <!-- Google Fonts Roboto -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- Material Design Bootstrap -->
+    <link rel="stylesheet" href="css/mdb.min.css">
+    <!-- Your custom styles (optional) -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <!-- Start your project here-->
+    <!--Main Navigation-->
+<header>
+  <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top nopadding">
+  <!-- Container wrapper -->
+  <div class="container-fluid">
+    <!-- Toggle button -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-mdb-toggle="collapse"
+      data-mdb-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <i class="fas fa-bars"></i>
     </button>
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-      <ul class="navbar-nav mr-auto">
+
+    <!-- Collapsible wrapper -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Navbar brand -->
+      <a class="navbar-brand mt-2 mt-lg-0" href="#">
+        <img
+          src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
+          height="15"
+          alt="MDB Logo"
+          loading="lazy"
+        />
+      </a>
+      <!-- Left links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="#">Witaj
-            <span class="sr-only">(current)</span>
-          </a>
+          <a class="nav-link" href="#dashboard">Dashboard</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#lastTravels">Najnowsze</a>
+          <a class="nav-link" href="#Najnowsze">Najnowsze</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#gallery">Galeria</a>
+          <a class="nav-link" href="#onas">O Nas</a>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">Więcej</a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item nav-link black-text" href="#quote">O nas</a>
-            <a class="dropdown-item nav-link black-text" href="#chart">Dane</a>
-            <a class="dropdown-item nav-link black-text" href="#faq">FAQ</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item nav-link black-text" href="#contact">Napisz do nas</a>
-          </div>
+        <li class="nav-item">
+          <a class="nav-link" href="#ourTravelers">Nasi podróżnicy</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#faq">FAQ</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#chart">Cele podróży</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#pracownicy">Nasi pracownicy</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#contact">Kontakt</a>
         </li>
       </ul>
-      <form class="form-inline">
-        <div class="md-form my-0">
-          <input class="form-control mr-sm2" type="text" placeholder="Szukaj" aria-label="Search">
-        </div>
-      </form>
+      <!-- Left links -->
+    </div>
+    <!-- Collapsible wrapper -->
+
+    <!-- Right elements -->
+    <div class="d-flex align-items-center">
+      <!-- Icon -->
+      <a style="margin-right: 1rem!important;" class="text-reset me-3" href="#">
+        <i class="fas fa-shopping-cart"></i>
+      </a>
+
+      <!-- Notifications -->
+      <div class="dropdown">
+        <a
+          class="text-reset me-3 dropdown-toggle hidden-arrow"
+          href="#"
+          id="navbarDropdownMenuLink"
+          role="button"
+          data-mdb-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="fas fa-bell"></i>
+          <span class="badge rounded-pill badge-notification bg-danger">1</span>
+        </a>
+        <ul
+          class="dropdown-menu dropdown-menu-end"
+          aria-labelledby="navbarDropdownMenuLink"
+        >
+          <li>
+            <a class="dropdown-item" href="#">Some news</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="#">Another news</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </li>
+        </ul>
+      </div>
+      <!-- Avatar -->
+      <div class="dropdown">
+        <a
+          class="dropdown-toggle d-flex align-items-center hidden-arrow"
+          href="#"
+          id="navbarDropdownMenuAvatar"
+          role="button"
+          data-mdb-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <img
+            src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+            class="rounded-circle"
+            height="25"
+            alt="Black and White Portrait of a Man"
+            loading="lazy"
+          />
+        </a>
+        <ul
+          class="dropdown-menu dropdown-menu-end"
+          aria-labelledby="navbarDropdownMenuAvatar"
+        >
+          <li>
+            <a class="dropdown-item" href="#">My profile</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="#">Settings</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="#">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!-- Right elements -->
+  </div>
+  <!-- Container wrapper -->
+</nav>
+<!-- Navbar -->
+<div id="intro" class="view">
+
+  <div id ="dashboard"  class="mask rgba-stylish-strong">
+    <div style="display: block !important; margin-top:300px" class="container-fluid d-flex align-items-center justify-contentcenter h-100">
+    <div  class="row d-flex justify-content-center text-center">
+    <div  class="col-md-10">
+      <!-- Heading -->
+     <h2 class="display-4 font-weight-bold white-text pt-5 mb-2">Podróżowanie</h2>
+     <!-- Divider -->
+     <hr class="hr-light">
+     <!-- Description -->
+     <h4 class="white-text my4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti consequuntu
+    r.</h4>
+     <button type="button" class="btn btn-outlinewhite">Dowiedz się więcej<i class="fas fa-book ml-2"></i></button>
     </div>
     </div>
-  </nav>
+    </div>
+    </div>
 
+  <div class="mask rgba-redlight">
+  </div>
+ </div>
+</header>
+<!--Main layout-->
+<main>
+  <div id="Najnowsze" class="container container-fluid d-flex align-items-center justify-content-center wow fadeInLeft">
+    <section id="lastTravels" class="text-center">
+      <h4 class="display-4 font-weight-bold my-4">Najnowsze</h4>
 
-  <!-- ------------------------------------------------------------- INTRO ------------------------------------------------------------- -->
-  <div id="intro" class="view">
-    <div class="mask rgba-black-strong">
-      <div class="container-fluid d-flex align-items-center justify-content-center h-100">
-        <div class="row d-flex justify-content-center text-center">
-          <div class="col-md-10">
-            <div class="wow fadeInUp">
-              <h2 class="display-4 font-weight-bold white-text pt-5 mb-2">Podróżowanie</h2>
-              <hr class="hr-light">
-              <h4 class="white-text my4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti
-                consequuntur.</h4>
-            </div>
-            <button type="button" class="btn white-text btn-outline-white wow fadeIn delay-1s">Dowiedz się więcej<i
-                class="fas fa-book ml-2"></i></button>
+      <div class="row d-flex justify-content-center">
+        <div class="col-lg-4 col-md-12 mb-4 my_animation">
+          <div class="view overlay z-depth-1-half">
+            <img src="img/trip1.jpg" class="img-fluid" alt="alter">
+            <a href="#!">
+              <div class="mask rgba-blue-light"></div>
+            </a>
           </div>
+          <h4 class="my-4 font-weight-bold">Podróż 1</h4>
+          <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit maiores nam,
+            aperiam minima assumenda deleniti hic.</p>
         </div>
+        <div class="col-lg-4 col-md-6 mb-4 my_animation">
+          <div class="view overlay z-depth-1-half">
+            <img src="img/trip2.jpg" class="img-fluid" alt="alter">
+            <a href="#!">
+              <div class="mask rgba-blue-light"></div>
+            </a>
+          </div>
+          <h4 class="my-4 font-weight-bold">Podróż 2</h4>
+          <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit maiores nam,
+            aperiam minima assumenda deleniti hic.</p>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4 my_animation">
+          <div class="view overlay z-depth-1-half">
+            <img src="img/trip3.jpg" class="img-fluid" alt="alter">
+            <a href="#!">
+              <div class="mask rgba-blue-light"></div>
+            </a>
+          </div>
+          <h4 class="my-4 font-weight-bold">Podróż 3</h4>
+          <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit maiores nam,
+            aperiam minima assumenda deleniti hic.</p>
+        </div>
+      </div>
+      <div class="row d-flex justify-content-center">
+        <div class="col-lg-4 col-md-12 mb-4 my_animation">
+          <div class="view overlay z-depth-1-half">
+            <img src="img/trip4.jpg" class="img-fluid" alt="alter">
+            <a href="#!">
+              <div class="mask rgba-blue-light"></div>
+            </a>
+          </div>
+          <h4 class="my-4 font-weight-bold">Podróż 4</h4>
+          <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit maiores nam,
+            aperiam minima assumenda deleniti hic.</p>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4 my_animation">
+          <div class="view overlay z-depth-1-half">
+            <img src="img/trip5.jpg" class="img-fluid" alt="alter">
+            <a href="#!">
+              <div class="mask rgba-blue-light"></div>
+            </a>
+          </div>
+          <h4 class="my-4 font-weight-bold">Podróż 5</h4>
+          <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit maiores nam,
+            aperiam minima assumenda deleniti hic.</p>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4 my_animation">
+          <div class="view overlay z-depth-1-half">
+            <img src="img/trip6.jpg" class="img-fluid" alt="alter">
+            <a href="#!">
+              <div class="mask rgba-blue-light"></div>
+            </a>
+          </div>
+          <h4 class="my-4 font-weight-bold">Podróż 6</h4>
+          <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit maiores nam,
+            aperiam minima assumenda deleniti hic.</p>
+        </div>
+      </div>
+  </div>
+  </section>
+
+  <div id="onas">
+    <h1 style="width: 100%; text-align: center; font-size: 70px; margin-top: 50px;">O NAS</h1>
+    <div class="row center">
+      <div class="col-md-3">
+        <h1>Lorem ipsum</h1>
+        <h5>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere ea illum reprehenderit distinctio facilis ab reiciendis excepturi atque, incidunt suscipit qui.</h5>
+        <h5>Non similique harum, tenetur at cumque ipsum voluptatum porro alias praesentium perferendis, commodi voluptas modi itaque aliquam quisquam vel unde possimus quidem quaerat fuga!</h5>
+        <h5>Neque, in nulla! Modi, repellendus eaque ullam dolor aspernatur consectetur odio architecto at laborum nemo accusantium debitis illo, nisi obcaecati suscipit fugit, quis molestias soluta maiores nesciunt iure neque ratione sit veniam. Pariatur mollitia repudiandae fugiat modi optio autem quos culpa tenetur officia corrupti sunt dolor, eius obcaecati ipsum. Eum autem sed rem nihil at!</h5>
+      </div>
+      <div class="col-md-9">
+        <img class="my_3x_img" src="./img/bg.jpg"/>
       </div>
     </div>
   </div>
-</head>
 
-<body>
-  <main class="mt-5">
-
-    <!-- ------------------------------------------------------- LAST TRAVELS: grid ----------------------------------------------------- -->
-    <div class="container container-fluid d-flex align-items-center justify-content-center wow fadeInLeft">
-      <section id="lastTravels" class="text-center">
-        <h4 class="display-4 font-weight-bold my-4">Najnowsze</h4>
-
-        <div class="row d-flex justify-content-center">
-          <div class="col-lg-4 col-md-12 mb-4">
-            <div class="view overlay z-depth-1-half">
-              <img src="img/trip1.jpg" class="img-fluid" alt="alter">
-              <a href="#!">
-                <div class="mask rgba-blue-light"></div>
-              </a>
+  <div id="ourTravelers">
+    <section class="vh-100 bg-light my_background_image">
+      <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-md-12 col-xl-5">
+    
+            <div class="card text-white" style="background-color: #1f959b; border-radius: 15px;">
+              <div class="card-body p-5">
+    
+                <i class="fas fa-quote-left fa-2x mb-4"></i>
+    
+                <p class="lead">Genius is one percent inspiration and ninety-nine percent perspiration.</p>
+    
+                <hr>
+    
+                <div class="d-flex justify-content-between">
+                  <p class="mb-0">Thomas Edison</p>
+                  <h6 class="mb-0"><span class="badge rounded-pill"
+                      style="background-color: rgba(0,0,0, 0.2);">876</span> <i class="fas fa-heart ms-2"></i>
+                  </h6>
+                </div>
+    
+              </div>
             </div>
-            <h4 class="my-4 font-weight-bold">Podróż 1</h4>
-            <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit maiores nam,
-              aperiam minima assumenda deleniti hic.</p>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="view overlay z-depth-1-half">
-              <img src="img/trip2.jpg" class="img-fluid" alt="alter">
-              <a href="#!">
-                <div class="mask rgba-blue-light"></div>
-              </a>
-            </div>
-            <h4 class="my-4 font-weight-bold">Podróż 2</h4>
-            <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit maiores nam,
-              aperiam minima assumenda deleniti hic.</p>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="view overlay z-depth-1-half">
-              <img src="img/trip3.jpg" class="img-fluid" alt="alter">
-              <a href="#!">
-                <div class="mask rgba-blue-light"></div>
-              </a>
-            </div>
-            <h4 class="my-4 font-weight-bold">Podróż 3</h4>
-            <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit maiores nam,
-              aperiam minima assumenda deleniti hic.</p>
+    
           </div>
         </div>
-        <div class="row d-flex justify-content-center">
-          <div class="col-lg-4 col-md-12 mb-4">
-            <div class="view overlay z-depth-1-half">
-              <img src="img/trip4.jpg" class="img-fluid" alt="alter">
-              <a href="#!">
-                <div class="mask rgba-blue-light"></div>
-              </a>
-            </div>
-            <h4 class="my-4 font-weight-bold">Podróż 4</h4>
-            <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit maiores nam,
-              aperiam minima assumenda deleniti hic.</p>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="view overlay z-depth-1-half">
-              <img src="img/trip5.jpg" class="img-fluid" alt="alter">
-              <a href="#!">
-                <div class="mask rgba-blue-light"></div>
-              </a>
-            </div>
-            <h4 class="my-4 font-weight-bold">Podróż 5</h4>
-            <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit maiores nam,
-              aperiam minima assumenda deleniti hic.</p>
-          </div>
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="view overlay z-depth-1-half">
-              <img src="img/trip6.jpg" class="img-fluid" alt="alter">
-              <a href="#!">
-                <div class="mask rgba-blue-light"></div>
-              </a>
-            </div>
-            <h4 class="my-4 font-weight-bold">Podróż 6</h4>
-            <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit maiores nam,
-              aperiam minima assumenda deleniti hic.</p>
-          </div>
-        </div>
-    </div>
+      </div>
     </section>
+</div>
 
     
 
@@ -385,7 +528,20 @@
   </main>
 
 
-
+ <!-- MDB -->
+ <script type="text/javascript" src="js/mdb.min.js"></script>
+ <!-- Custom scripts -->
+ <script type="text/javascript"></script>
+ <!-- jQuery -->
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="js/popper.min.js"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="js/mdb.min.js"></script>
+<!-- Your custom scripts (optional) -->
+<script type="text/javascript"></script>
   <!-- jQuery -->
   <script type="text/javascript" src="js/jquery.min.js"></script>
   <!-- Bootstrap tooltips -->
