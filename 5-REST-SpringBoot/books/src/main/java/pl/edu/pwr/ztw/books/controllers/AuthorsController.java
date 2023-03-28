@@ -8,10 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.edu.pwr.ztw.books.interfaces.IAuthorsService;
 import pl.edu.pwr.ztw.books.models.Author;
 
@@ -26,7 +23,7 @@ public class AuthorsController {
             @ApiResponse(responseCode = "503", description = "Cannot connect to database", content = @Content),
     })
     @RequestMapping(value = "/add/author", method = RequestMethod.POST)
-    public ResponseEntity<Object> addAuthor(Author author) {
+    public ResponseEntity<Object> addAuthor(@RequestBody Author author) {
         return new ResponseEntity<>(authorsService.addAuthor(author), HttpStatus.OK);
     }
 
@@ -49,7 +46,12 @@ public class AuthorsController {
     @RequestMapping(value = "/get/author/{id}", method = RequestMethod.GET)
     public ResponseEntity<Object> getAuthor(@Parameter(description = "ID of author to get")
                                                 @PathVariable("id") int id){
-        return new ResponseEntity<>(authorsService.getAuthor(id), HttpStatus.OK);
+        Author author = authorsService.getAuthor(id);
+        if(author == null){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }else{
+            return new ResponseEntity<>(authorsService.getAuthor(id), HttpStatus.OK);
+        }
     }
 
     @Operation(summary="Update author with specified id")
@@ -60,7 +62,7 @@ public class AuthorsController {
     })
     @RequestMapping(value = "/update/author/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Object> updateAuthor(@Parameter(description = "ID of author to update")
-                                                   @PathVariable("id") int id, Author author) {
+                                                   @PathVariable("id") int id, @RequestBody Author author) {
         return new ResponseEntity<>(authorsService.updateAuthor(id, author), HttpStatus.OK);
     }
 
@@ -73,7 +75,12 @@ public class AuthorsController {
     @RequestMapping(value = "/delete/author/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> deleteAuthor(@Parameter(description = "ID of author to delete")
                                                    @PathVariable("id") int id) {
-        return new ResponseEntity<>(authorsService.deleteAuthor(id), HttpStatus.OK);
+        boolean deletedAuthor = authorsService.deleteAuthor(id);
+        if(deletedAuthor){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
     }
 
 }

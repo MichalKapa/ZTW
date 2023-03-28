@@ -8,10 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.edu.pwr.ztw.books.interfaces.IBooksService;
 import pl.edu.pwr.ztw.books.models.Book;
 
@@ -26,7 +23,7 @@ public class BooksController {
             @ApiResponse(responseCode = "503", description = "Cannot connect to database", content = @Content),
     })
     @RequestMapping(value = "/add/book", method = RequestMethod.POST)
-    public ResponseEntity<Object> addBook(Book book) {
+    public ResponseEntity<Object> addBook(@RequestBody Book book) {
         return new ResponseEntity<>(booksService.addBook(book), HttpStatus.OK);
     }
 
@@ -49,7 +46,13 @@ public class BooksController {
     @RequestMapping(value = "/get/book/{id}", method = RequestMethod.GET)
     public ResponseEntity<Object> getBook(@Parameter(description = "ID of book to get")
                                               @PathVariable("id") int id){
-        return new ResponseEntity<>(booksService.getBook(id), HttpStatus.OK);
+        Book foundBook = booksService.getBook(id);
+        if (foundBook == null){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        else{
+            return new ResponseEntity<>(foundBook, HttpStatus.OK);
+        }
     }
 
     @Operation(summary="Update book with specified id")
@@ -60,8 +63,14 @@ public class BooksController {
     })
     @RequestMapping(value = "/update/book/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Object> updateBook(@Parameter(description = "ID of book to update")
-                                                 @PathVariable("id") int id, Book book) {
-        return new ResponseEntity<>(booksService.updateBook(id, book), HttpStatus.OK);
+                                                 @PathVariable("id") int id, @RequestBody Book book) {
+        Book foundBook = booksService.updateBook(id, book);
+        if (foundBook == null){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        else{
+            return new ResponseEntity<>(foundBook, HttpStatus.OK);
+        }
     }
 
     @Operation(summary="Delete book with specified id")
@@ -73,6 +82,12 @@ public class BooksController {
     @RequestMapping(value = "/delete/book/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> deleteBook(@Parameter(description = "ID of book to delete")
                                                  @PathVariable("id") int id) {
-        return new ResponseEntity<>(booksService.deleteBook(id), HttpStatus.OK);
+        boolean foundBook = booksService.deleteBook(id);
+        if (foundBook){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        }
     }
 }
