@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.edu.pwr.ztw.books.exceptions.AuthorNotFoundException;
 import pl.edu.pwr.ztw.books.interfaces.IAuthorsService;
 import pl.edu.pwr.ztw.books.models.Author;
 
@@ -23,8 +24,8 @@ public class AuthorsController {
             @ApiResponse(responseCode = "503", description = "Cannot connect to database", content = @Content),
     })
     @RequestMapping(value = "/add/author", method = RequestMethod.POST)
-    public ResponseEntity<Object> addAuthor(@RequestBody Author author) {
-        return new ResponseEntity<>(authorsService.addAuthor(author), HttpStatus.OK);
+    public ResponseEntity<Object> addAuthor(String firstName, String lastName) {
+        return new ResponseEntity<>(authorsService.addAuthor(firstName, lastName), HttpStatus.OK);
     }
 
     @Operation(summary="Get all authors")
@@ -46,11 +47,11 @@ public class AuthorsController {
     @RequestMapping(value = "/get/author/{id}", method = RequestMethod.GET)
     public ResponseEntity<Object> getAuthor(@Parameter(description = "ID of author to get")
                                                 @PathVariable("id") int id){
-        Author author = authorsService.getAuthor(id);
-        if(author == null){
+        try {
+            Author author = authorsService.getAuthor(id);
+            return new ResponseEntity<>(author, HttpStatus.OK);
+        } catch (AuthorNotFoundException e){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }else{
-            return new ResponseEntity<>(authorsService.getAuthor(id), HttpStatus.OK);
         }
     }
 
@@ -62,8 +63,13 @@ public class AuthorsController {
     })
     @RequestMapping(value = "/update/author/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Object> updateAuthor(@Parameter(description = "ID of author to update")
-                                                   @PathVariable("id") int id, @RequestBody Author author) {
-        return new ResponseEntity<>(authorsService.updateAuthor(id, author), HttpStatus.OK);
+                                                   @PathVariable("id") int id, String firstName, String lastName) {
+        try {
+            Author updatedAuthor = authorsService.updateAuthor(id, firstName, lastName);
+            return new ResponseEntity<>(updatedAuthor, HttpStatus.OK);
+        }catch (AuthorNotFoundException e){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 
     @Operation(summary="Delete author by id")
@@ -75,11 +81,11 @@ public class AuthorsController {
     @RequestMapping(value = "/delete/author/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> deleteAuthor(@Parameter(description = "ID of author to delete")
                                                    @PathVariable("id") int id) {
-        boolean deletedAuthor = authorsService.deleteAuthor(id);
-        if(deletedAuthor){
+        try {
+            authorsService.deleteAuthor(id);
             return new ResponseEntity<>(true, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(false, HttpStatus.OK);
+        }catch (AuthorNotFoundException e) {
+            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
         }
     }
 

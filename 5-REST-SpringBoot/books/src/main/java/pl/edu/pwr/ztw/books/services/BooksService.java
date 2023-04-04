@@ -1,5 +1,6 @@
 package pl.edu.pwr.ztw.books.services;
 import org.springframework.stereotype.Service;
+import pl.edu.pwr.ztw.books.exceptions.BookNotFoundException;
 import pl.edu.pwr.ztw.books.models.Author;
 import pl.edu.pwr.ztw.books.models.Book;
 import pl.edu.pwr.ztw.books.interfaces.IBooksService;
@@ -11,13 +12,14 @@ import java.util.List;
 public class BooksService implements IBooksService {
     private static List<Book> booksRepo = new ArrayList<>();
     static {
-        booksRepo.add(new Book(1,"Potop", AuthorsService.authorsRepo.get(0), 936));
-        booksRepo.add(new Book(2,"Wesele", AuthorsService.authorsRepo.get(1), 150));
-        booksRepo.add(new Book(3,"Dziady", AuthorsService.authorsRepo.get(2), 292));
+        booksRepo.add(new Book("Potop", 1, 936));
+        booksRepo.add(new Book("Wesele", 2, 150));
+        booksRepo.add(new Book("Dziady", 3, 292));
     }
 
     @Override
-    public Book addBook(Book book) {
+    public Book addBook(String title, int authorId, int pages) {
+        Book book = new Book(title, authorId, pages);
         booksRepo.add(book);
         return book;
     }
@@ -32,19 +34,20 @@ public class BooksService implements IBooksService {
         return booksRepo.stream()
                 .filter(b -> b.getId() == id)
                 .findAny()
-                .orElse(null);
+                .orElseThrow(() -> new BookNotFoundException(id));
     }
 
     @Override
-    public Book updateBook(int id, Book book) {
-        deleteBook(id);
-        addBook(book);
+    public Book updateBook(int id, String title, int authorId, int pages) {
+        Book book = this.getBook(id);
+        book.setTitle(title);
+        book.setAuthor(authorId);
+        book.setPages(pages);
         return book;
     }
 
     @Override
     public boolean deleteBook(int id) {
-        booksRepo.remove(getBook(id));
-        return true;
+        return booksRepo.remove(getBook(id));
     }
 }
