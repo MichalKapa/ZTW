@@ -1,23 +1,23 @@
 <template>
   <div id="app" class="small-container">
-  <h1>Znajomi</h1>
-  <person-form @add:person="addPerson"/>
-  <persons-table :personsSource="persons" />
+  <h1>Autorzy</h1>
+  <author-form @add:author="addAuthor"/>
+  <authors-table :authorsSource="authors" />
   </div>
  </template>
  <script>
-   import PersonsTable from '@/components/PersonsTable.vue'
-   import PersonForm from '@/components/PersonForm.vue'
+   import AuthorsTable from '@/components/AuthorsTable.vue'
+   import AuthorForm from '@/components/AuthorForm.vue'
 
  export default {
   name: 'app',
   components: {
-    PersonsTable,
-    PersonForm,
+    AuthorsTable,
+    AuthorForm,
   },
   data() {
     return {
-      persons: [
+      authors: [
         // {
         //   id: 1,
         //   name: 'Adam Słodowy',
@@ -40,21 +40,21 @@
     }
   }, 
   methods: {
-    addPerson(person) {
-      this.persons = [...this.persons, person]
+    addAuthor(author) {
+      this.authors = [...this.authors, author]
     },
-    async getPersons() {
+    async getAuthors() {
         try {
-          const response = await fetch('https://jsonplaceholder.typicode.com/users')
+          const response = await fetch('localhost:8080/get/books')
           const data = await response.json()
-          this.persons = data
+          this.authors = data
         } catch (error) {
           console.error(error)
         }
     }, 
   }, 
   mounted() {
-    this.getPersons()
+    this.getAuthors()
   },
  } 
  </script>

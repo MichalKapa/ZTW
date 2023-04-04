@@ -1,26 +1,26 @@
 <template>
-    <div id="person-form">
+    <div id="author-form">
         <form @submit.prevent="handleSubmit">
-            <label>Imię i nazwisko</label>
+            <label>ID</label>
             <input
-                v-model="person.name"
+                v-model="author.id"
                 type="text"
-                :class="{ 'has-error': submitting && invalidName }"
+                :class="{ 'has-error': submitting && invalidID }"
                 @focus="clearStatus"
                 @keypress="clearStatus"
             />
-            <label>Email</label>
+            <label>Imię</label>
             <input
-                v-model="person.email"
+                v-model="author.firstName"
                 type="text"
-                :class="{ 'has-error': submitting && invalidEmail }"
+                :class="{ 'has-error': submitting && invalidFirstName }"
                 @focus="clearStatus"
             />
-            <label>Telefon</label>
+            <label>Nazwisko</label>
             <input
-                v-model="person.phone"
+                v-model="author.lastName"
                 type="text"
-                :class="{ 'has-error': submitting && invalidPhone }"
+                :class="{ 'has-error': submitting && invalidLastName }"
                 @focus="clearStatus"
                 @keypress="clearStatus"
             />
@@ -36,16 +36,16 @@
 </template>
 <script>
  export default {
-    name: 'person-form',
+    name: 'author-form',
     data() {
         return {
             submitting: false,
             error: false,
             success: false, 
-            person: {
-                name: '',
-                email: '',
-                phone: '',
+            author: {
+                id: '',
+                firstName: '',
+                lastName: '',
             },
         }
     },
@@ -54,16 +54,16 @@
             this.submitting = true
             this.clearStatus()
             //check form fields
-            if (this.invalidName || this.invalidEmail || this.invalidPhone) {
+            if (this.invalidID || this.invalidFirstName || this.invalidLastName) {
                 this.error = true
                 return
             }
-            this.$emit('add:person', this.person)
+            this.$emit('add:author', this.author)
             //clear form fields
-            this.person = {
-                name: '',
-                email: '',
-                phone: '',
+            this.author = {
+                id: '',
+                firstName: '',
+                lastName: '',
             } 
             this.error = false
             this.success = true
@@ -76,14 +76,14 @@
         },
     }, 
     computed: {
-        invalidName() {
-            return this.person.name === ''
+        invalidID() {
+            return this.author.id === ''
         },
-        invalidEmail() {
-            return this.person.email === ''
+        invalidFirstName() {
+            return this.author.firstName === ''
         },
-        invalidPhone() {
-            return this.person.phone === ''
+        invalidLastName() {
+            return this.author.lastName === ''
         }
     }
 }
