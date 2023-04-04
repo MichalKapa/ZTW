@@ -1,6 +1,7 @@
 package pl.edu.pwr.ztw.books.services;
 
 import org.springframework.stereotype.Service;
+import pl.edu.pwr.ztw.books.exceptions.AuthorNotFoundException;
 import pl.edu.pwr.ztw.books.models.Author;
 import pl.edu.pwr.ztw.books.interfaces.IAuthorsService;
 
@@ -12,13 +13,14 @@ import java.util.List;
 public class AuthorsService implements IAuthorsService{
     public static List<Author> authorsRepo = new ArrayList<>();
     static {
-        authorsRepo.add(new Author(1 , "Henryk", "Sienkiewicz" ));
-        authorsRepo.add(new Author(2 , "Stanisław", "Reymont" ));
-        authorsRepo.add(new Author(3 , "Adam", "Mickiewicz" ));
+        authorsRepo.add(new Author("Henryk", "Sienkiewicz" ));
+        authorsRepo.add(new Author("Stanisław", "Reymont" ));
+        authorsRepo.add(new Author("Adam", "Mickiewicz" ));
     }
 
     @Override
-    public Author addAuthor(Author author) {
+    public Author addAuthor(String firstName, String lastName) {
+        Author author = new Author(firstName, lastName);
         authorsRepo.add(author);
         return author;
     }
@@ -33,20 +35,20 @@ public class AuthorsService implements IAuthorsService{
         return authorsRepo.stream()
                 .filter(b -> b.getId() == id)
                 .findAny()
-                .orElse(null);
+                .orElseThrow(() -> new AuthorNotFoundException(id));
     }
 
     @Override
-    public Author updateAuthor(int id, Author author) {
-        deleteAuthor(id);
-        addAuthor(author);
+    public Author updateAuthor(int id, String firstName, String lastName) {
+        Author author = this.getAuthor(id);
+        author.setFirstName(firstName);
+        author.setLastName(lastName);
         return author;
     }
 
     @Override
     public boolean deleteAuthor(int id) {
-        authorsRepo.remove(getAuthor(id));
-        return true;
+        return authorsRepo.remove(getAuthor(id));
     }
 }
 
