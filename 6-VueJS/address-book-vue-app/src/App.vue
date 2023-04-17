@@ -45,7 +45,7 @@
     },
     async getAuthors() {
         try {
-          const response = await fetch('localhost:8080/get/books')
+          const response = await fetch('localhost:8080/get/authors')
           const data = await response.json()
           this.authors = data
         } catch (error) {
