@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.edu.pwr.ztw.books.exceptions.BookNotFoundException;
 import pl.edu.pwr.ztw.books.interfaces.IBooksService;
 import pl.edu.pwr.ztw.books.models.Book;
-
+@CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
 public class BooksController {
     @Autowired
