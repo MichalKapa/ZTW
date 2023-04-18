@@ -1,5 +1,5 @@
 <template>
-    <div id="author-form">
+    <div id="author-add">
         <form @submit.prevent="handleSubmit">
             <label>Imię</label>
             <input
@@ -50,7 +50,7 @@ import LibraryAPI from '../services/LibraryAPI'
         }
         loadAuthors()
     },
-    name: 'author-form',
+    name: 'author-add',
     data() {
         return {
             submitting: false,

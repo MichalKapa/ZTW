@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.*;
 import pl.edu.pwr.ztw.books.exceptions.AuthorNotFoundException;
 import pl.edu.pwr.ztw.books.interfaces.IAuthorsService;
 import pl.edu.pwr.ztw.books.models.Author;
+import pl.edu.pwr.ztw.books.services.AuthorsService;
 
+@CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
 public class AuthorsController {
     @Autowired
-    IAuthorsService authorsService;
+    AuthorsService authorsService;
 
     @Operation(summary="Add author to database")
     @ApiResponses(value = {
@@ -34,8 +36,12 @@ public class AuthorsController {
             @ApiResponse(responseCode = "503", description = "Cannot connect to database", content = @Content),
     })
     @RequestMapping(value = "/get/authors", method = RequestMethod.GET)
+//    public ResponseEntity<Object> getAuthors(@RequestParam(defaultValue = "0") Integer pageNo,
+//                                             @RequestParam(defaultValue = "10") Integer pageSize,
+//                                             @RequestParam(defaultValue = "id") String sortBy){
     public ResponseEntity<Object> getAuthors(){
         return new ResponseEntity<>(authorsService.getAuthors(), HttpStatus.OK);
+//        return new ResponseEntity<Object>(authorsService.getAllAuthors(pageNo, pageSize, sortBy), HttpStatus.OK);
     }
 
     @Operation(summary="Get author by id")
