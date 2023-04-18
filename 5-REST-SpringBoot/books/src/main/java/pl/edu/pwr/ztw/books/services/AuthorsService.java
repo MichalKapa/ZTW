@@ -18,7 +18,6 @@ public class AuthorsService{
 
     public static List<Author> authorsRepo = new ArrayList<>();
     static {
-        authorsRepo.add(new Author("Mariusz", "Pudzianowski" ));
         authorsRepo.add(new Author("Henryk", "Sienkiewicz" ));
         authorsRepo.add(new Author("Stanisław", "Reymont" ));
         authorsRepo.add(new Author("Adam", "Mickiewicz" ));

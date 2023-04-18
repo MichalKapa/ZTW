@@ -20,7 +20,8 @@
         required
       />
       <label>Autor</label>
-      <select v-model="book.author">
+      <select v-model="book.author"
+      required>
         <option
           v-for="a in authors"
           :key="a.id"
@@ -53,8 +54,8 @@ export default {
         pages: "",
         author: {
           id: 0,
-          firstName: "",
-          lastName: "",
+          firstName: "-",
+          lastName: "-",
         },
       },
       authors: [],
@@ -67,10 +68,11 @@ export default {
     async postData() {
       const response = await LibraryAPI.postBook(JSON.stringify({
         title: this.book.title,
-        authorID: this.book.author.id,
+        authorId: this.book.author.id,
         pages: this.book.pages,
       }))
       console.log(response)
+      window.location.reload();
     },
     async loadAuthors() {
       try {
