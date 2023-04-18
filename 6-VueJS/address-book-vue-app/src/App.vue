@@ -8,6 +8,7 @@
  <script>
    import AuthorsTable from '@/components/AuthorsTable.vue'
    import AuthorForm from '@/components/AuthorForm.vue'
+  import LibraryAPI from './services/LibraryAPI'
 
  export default {
   name: 'app',
@@ -39,23 +40,30 @@
       ]
     }
   }, 
+
+  setup() {
+        // axios.get("http://localhost:8081/authors")
+
+        const loadAuthors = async () => {
+            try {
+                const response = await LibraryAPI.getAuthors()
+                const data = await response.json()
+                this.authors = data
+                console.log( data )
+                console.log( this.authors )
+            } catch (err) {
+                console.log(err)
+            }
+            
+        }
+        loadAuthors()
+    },
+
   methods: {
     addAuthor(author) {
       this.authors = [...this.authors, author]
     },
-    async getAuthors() {
-        try {
-          const response = await fetch('localhost:8080/get/authors')
-          const data = await response.json()
-          this.authors = data
-        } catch (error) {
-          console.error(error)
-        }
-    }, 
   }, 
-  mounted() {
-    this.getAuthors()
-  },
  } 
  </script>
  <style>

@@ -1,20 +1,14 @@
 <template>
     <div id="author-form">
         <form @submit.prevent="handleSubmit">
-            <label>ID</label>
-            <input
-                v-model="author.id"
-                type="text"
-                :class="{ 'has-error': submitting && invalidID }"
-                @focus="clearStatus"
-                @keypress="clearStatus"
-            />
             <label>Imię</label>
             <input
                 v-model="author.firstName"
                 type="text"
                 :class="{ 'has-error': submitting && invalidFirstName }"
                 @focus="clearStatus"
+                :placeholder="author.firstName"
+                required
             />
             <label>Nazwisko</label>
             <input
@@ -22,20 +16,40 @@
                 type="text"
                 :class="{ 'has-error': submitting && invalidLastName }"
                 @focus="clearStatus"
+                :placeholder="author.lastName"
                 @keypress="clearStatus"
+                required
             />
             <p v-if="error && submitting" class="error-message">
-            Proszę wypełnić wskazane pola formularza
+                Proszę wypełnić wskazane pola formularza
             </p>
             <p v-if="success" class="success-message">
-            Dane poprawnie zapisano
+                Dane poprawnie zapisano
             </p>
-            <button>Dodaj kontakt</button>
+            <button>Dodaj autora</button>
         </form>
     </div>
 </template>
 <script>
+
+import { ref } from 'vue'
+import LibraryAPI from '../services/LibraryAPI'
+
  export default {
+    setup() {
+        // axios.get("http://localhost:8081/authors")
+
+        const authors = ref('')
+        const loadAuthors = async () => {
+            try {
+                const response = await LibraryAPI.getAuthors()
+                authors.value = response.data
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        loadAuthors()
+    },
     name: 'author-form',
     data() {
         return {
@@ -43,7 +57,6 @@
             error: false,
             success: false, 
             author: {
-                id: '',
                 firstName: '',
                 lastName: '',
             },
@@ -54,14 +67,13 @@
             this.submitting = true
             this.clearStatus()
             //check form fields
-            if (this.invalidID || this.invalidFirstName || this.invalidLastName) {
+            if (this.invalidFirstName || this.invalidLastName) {
                 this.error = true
                 return
             }
-            this.$emit('add:author', this.author)
+            // this.$emit('add:author', this.author)
             //clear form fields
             this.author = {
-                id: '',
                 firstName: '',
                 lastName: '',
             } 
@@ -74,11 +86,9 @@
             this.success = false
             this.error = false
         },
+
     }, 
     computed: {
-        invalidID() {
-            return this.author.id === ''
-        },
         invalidFirstName() {
             return this.author.firstName === ''
         },
