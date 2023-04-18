@@ -8,25 +8,21 @@ public class Book {
     private static int bookId = 0;
     private int id;
     private String title;
-    private int authorId;
+    private Author author;
     int pages;
-    public Book(String title, int authorID, int pages) {
+    public Book(String title, Author author, int pages) {
         this.id = ++bookId;
         this.title = title;
-        this.authorId = authorID;
+        this.author = author;
         this.pages = pages;
     }
     public int getId() { return id; }
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
     public Author getAuthor() {
-        try{
-            return new AuthorsService().getAuthor(authorId);
-        } catch (AuthorNotFoundException e){
-            return null;
-        }
+        return author;
     }
-    public void setAuthor(int authorId) { this.authorId = authorId; }
+    public void setAuthor(Author author) { this.author = author; }
     public int getPages() { return pages; }
     public void setPages(int pages) { this.pages = pages; }
 }

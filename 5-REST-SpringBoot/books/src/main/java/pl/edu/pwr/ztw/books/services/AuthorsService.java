@@ -3,6 +3,7 @@ package pl.edu.pwr.ztw.books.services;
 import org.springframework.stereotype.Service;
 import pl.edu.pwr.ztw.books.exceptions.AuthorNotFoundException;
 import pl.edu.pwr.ztw.books.models.Author;
+import pl.edu.pwr.ztw.books.models.Person;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import pl.edu.pwr.ztw.books.repository.AuthorRepository;
 
@@ -17,14 +18,15 @@ public class AuthorsService{
 
     public static List<Author> authorsRepo = new ArrayList<>();
     static {
+        authorsRepo.add(new Author("Mariusz", "Pudzianowski" ));
         authorsRepo.add(new Author("Henryk", "Sienkiewicz" ));
         authorsRepo.add(new Author("Stanisław", "Reymont" ));
         authorsRepo.add(new Author("Adam", "Mickiewicz" ));
     }
 
 //    @Override
-    public Author addAuthor(String firstName, String lastName) {
-        Author author = new Author(firstName, lastName);
+    public Author addAuthor(Person person) {
+        Author author = new Author(person.firstName, person.lastName);
         authorsRepo.add(author);
         return author;
     }
@@ -46,7 +48,7 @@ public class AuthorsService{
 //    }
 
 //    @Override
-    public Author getAuthor(int id) {
+    public static Author getAuthor(int id) {
         return authorsRepo.stream()
                 .filter(b -> b.getId() == id)
                 .findAny()

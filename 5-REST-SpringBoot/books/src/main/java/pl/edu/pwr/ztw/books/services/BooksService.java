@@ -8,18 +8,21 @@ import pl.edu.pwr.ztw.books.interfaces.IBooksService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static pl.edu.pwr.ztw.books.services.AuthorsService.getAuthor;
+
 @Service
 public class BooksService implements IBooksService {
     private static List<Book> booksRepo = new ArrayList<>();
     static {
-        booksRepo.add(new Book("Potop", 1, 936));
-        booksRepo.add(new Book("Wesele", 2, 150));
-        booksRepo.add(new Book("Dziady", 3, 292));
+        booksRepo.add(new Book("Potop", getAuthor(1), 936));
+        booksRepo.add(new Book("Wesele", getAuthor(2), 150));
+        booksRepo.add(new Book("Dziady", getAuthor(3), 292));
     }
 
     @Override
-    public Book addBook(String title, int authorId, int pages) {
-        Book book = new Book(title, authorId, pages);
+    public Book addBook(String title, Author author, int pages) {
+        Book book = new Book(title, author, pages);
         booksRepo.add(book);
         return book;
     }
@@ -41,7 +44,7 @@ public class BooksService implements IBooksService {
     public Book updateBook(int id, String title, int authorId, int pages) {
         Book book = this.getBook(id);
         book.setTitle(title);
-        book.setAuthor(authorId);
+        book.setAuthor(getAuthor(authorId));
         book.setPages(pages);
         return book;
     }

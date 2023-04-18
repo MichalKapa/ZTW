@@ -13,6 +13,7 @@ import pl.edu.pwr.ztw.books.exceptions.AuthorNotFoundException;
 import pl.edu.pwr.ztw.books.interfaces.IAuthorsService;
 import pl.edu.pwr.ztw.books.models.Author;
 import pl.edu.pwr.ztw.books.services.AuthorsService;
+import pl.edu.pwr.ztw.books.models.Person;
 
 @CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
@@ -26,8 +27,8 @@ public class AuthorsController {
             @ApiResponse(responseCode = "503", description = "Cannot connect to database", content = @Content),
     })
     @RequestMapping(value = "/add/author", method = RequestMethod.POST)
-    public ResponseEntity<Object> addAuthor(String firstName, String lastName) {
-        return new ResponseEntity<>(authorsService.addAuthor(firstName, lastName), HttpStatus.OK);
+    public ResponseEntity<Object> addAuthor(@RequestBody Person person) {
+        return new ResponseEntity<>(authorsService.addAuthor(person), HttpStatus.OK);
     }
 
     @Operation(summary="Get all authors")
@@ -69,9 +70,9 @@ public class AuthorsController {
     })
     @RequestMapping(value = "/update/author/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Object> updateAuthor(@Parameter(description = "ID of author to update")
-                                                   @PathVariable("id") int id, String firstName, String lastName) {
+                                                   @PathVariable("id") int id, @RequestBody Person person) {
         try {
-            Author updatedAuthor = authorsService.updateAuthor(id, firstName, lastName);
+            Author updatedAuthor = authorsService.updateAuthor(id, person.firstName, person.lastName);
             return new ResponseEntity<>(updatedAuthor, HttpStatus.OK);
         }catch (AuthorNotFoundException e){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

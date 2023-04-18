@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import pl.edu.pwr.ztw.books.exceptions.BookNotFoundException;
 import pl.edu.pwr.ztw.books.interfaces.IBooksService;
 import pl.edu.pwr.ztw.books.models.Book;
+import pl.edu.pwr.ztw.books.models.BookData;
+
+import static pl.edu.pwr.ztw.books.services.AuthorsService.getAuthor;
+
 @CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
 public class BooksController {
@@ -24,8 +28,9 @@ public class BooksController {
             @ApiResponse(responseCode = "503", description = "Cannot connect to database", content = @Content),
     })
     @RequestMapping(value = "/add/book", method = RequestMethod.POST)
-    public ResponseEntity<Object> addBook(String title, int authorId, int pages) {
-        return new ResponseEntity<>(booksService.addBook(title, authorId, pages), HttpStatus.OK);
+    public ResponseEntity<Object> addBook(@RequestBody BookData bookData) {
+        System.out.println(bookData);
+        return new ResponseEntity<>(booksService.addBook(bookData.title, getAuthor(bookData.authorId), bookData.pages), HttpStatus.OK);
     }
 
     @Operation(summary="Get all books from database")
