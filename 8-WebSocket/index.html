@@ -17,7 +17,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            display: flex;
+            display: none;
             height: 3rem;
             box-sizing: border-box;
             backdrop-filter: blur(10px);
@@ -46,6 +46,8 @@
         }
 
         #messages {
+            display: none;
+            flex-direction: column;
             list-style-type: none;
             margin: 0;
             padding: 0;
@@ -59,6 +61,27 @@
             background: #efefef;
         }
 
+        .message {
+            font-size: 20px;
+            background-color: #757171;
+            max-width: 600px;
+            border-radius: 20px;
+            padding: 10px;
+            margin: 10px;
+            color: white;
+            text-align: left;
+        }
+        
+        
+
+        .my_messages {
+            align-self: flex-end;
+        }
+
+        .other_messages {
+            align-self: flex-start;
+        }
+
         #chat_bubble_row {
             width: 100%;
             display: flex;
@@ -66,6 +89,10 @@
             background-color: #333;
             height: 100px;
 
+        }
+        .user_name {
+            font-weight: bold;
+            text-align: left;
         }
         .chat_bubble {
             width: 300px;
@@ -155,7 +182,7 @@
             width: 708px;
             margin: auto
         }
-        .room_input {
+        #room_input {
             border-radius: 20px;
             height: 70px;
             margin-top: 60px;
@@ -175,7 +202,7 @@
 
         #room_header_row {
             width: 100%;
-            display: flex;
+            display: none;
             justify-content: space-around;
             background-color: #757171;
             height: 100px;
@@ -193,7 +220,7 @@
             Podaj nazwę nowego pokoju:
         </div>
         <form class="room_form">
-            <input class="room_input" maxlength="20" name="room_name"/>
+            <input id="room_input" type="text" maxlength="20" name="room_name"/>
         </form>
         <div class="room_buttons_row">
             <div class="room_creator_add" onclick="addRoom()">
@@ -223,13 +250,32 @@
         <div class="chat_bubble" onclick="leaveRoom()">
             <h5 class="chat_bubble_text leave_button">Opuść</h5>
         </div>
-            <h5 class="chat_bubble_text marg10">Wybrany pokój:</h5>
-            <span class="chat_bubble_text inline_span marg10">Pokój 1</span>
+        <h5 class="chat_bubble_text marg10">Wybrany pokój:</h5>
+        <span class="chat_bubble_text inline_span marg10">Pokój 1</span>
+        <h1></h1>
     </div>
+    
 
-    <ul id="messages"></ul>
+    <ul id="messages">
+        
+        <div class="other_messages message">
+            <span class="user_name">ktośinny:</span>
+            <li>otherMessage</li>
+        </div>
+
+        <div class="my_messages message">
+            <span class="user_name">ja:</span>
+            <li>myMessage</li>
+        </div>
+        <div class="other_messages message">
+            <span class="user_name">ktośinny:</span>
+            <li>otherMessage</li>
+        </div>
+
+
+    </ul>
     <form id="form" action="">
-        <input id="input" autocomplete="off" /><button>Send</button>
+        <input id="input" autocomplete="off" /><button>Wyślij</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -258,30 +304,47 @@
         });
 
         availableRooms.forEach(room => {
-            console.log(room)
+            document.getElementById("chat_bubble_row").appendChild(
+
+            `<div class="chat_bubble" onclick="joinRoom('${room.roomname}')">
+                    <h5 class="chat_bubble_text">${room.roomname}</h5>
+                </div>`
+            )
+            
         });
-        // <div class="chat_bubble" onclick="joinRoom('nazwa_pokojuuu')">
-        //     <h5 class="chat_bubble_text">Pokój1</h5>
-        // </div>
+
+        messageList.forEach(message => {
+            if (message.user.id == currentUserId) {
+                document.getElementById("messages").appendChild(
+                    `<div class="my_messages message">
+                        <span class="user_name">${message.user.name}:</span>
+                        <li>${message.text}</li>
+                    </div>`
+                )
+            }
+            else {
+                document.getElementById("messages").appendChild(
+                    `<div class="other_messages message">
+                        <span class="user_name">${message.user.name}:</span>
+                        <li>${message.text}</li>
+                    </div>`
+                )
+            }
+        });
 
         function openRoomCreator() {
             document.getElementById("room_creator").style.display="block";
         }
 
         function closeRoomCreator() {
+            var input = document.getElementById("room_input");
+            input.value = "";
             document.getElementById("room_creator").style.display="none";
         }
 
         function addRoom() {
             closeRoomCreator()
         }
-
-        function changeRoom(index) {
-            console.log("change room to: " + index);
-        }
-        
-      
-        
 
         function sendMsg(message){ //use it for sending msgs
             const payload = {"id": socket.id, "username": socket.username, "type": "message", "content": message};
@@ -329,10 +392,16 @@
         }
 
         function joinRoom(roomname){ //use it to join to a room
+            document.getElementById("messages").style.display = "flex";
+            document.getElementById("form").style.display = "flex";
+            document.getElementById("room_header_row").style.display = "flex";
             socket.emit('join room', roomname);
         }
 
         function leaveRoom(roomname){ //use it to leave a room
+            document.getElementById("messages").style.display = "none";
+            document.getElementById("form").style.display = "none";
+            document.getElementById("room_header_row").style.display = "none";
             currentlyTypingUsers = [];
             socket.emit('leave room', roomname);
         }
