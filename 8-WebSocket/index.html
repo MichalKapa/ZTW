@@ -220,20 +220,7 @@
             background-color: rgb(145, 35, 35);
             border-radius: 30px;
         }
-        .me{
-            background-color: blue;
-            color: #fff;
-            text-align: right;
-        }
-        .other{
-            background-color: #757171;
-            color: black;
-            text-align: left;
-        }
-        .join-left {
-            color:#333;
-            text-align: center;
-        }
+       
         #login_window {
             background-color: black;
             border-radius: 100px;
@@ -260,6 +247,9 @@
             color: white;
             font-weight: bold;
             margin-bottom: 70px;
+        }
+        #chat_rooms{
+            display: flex;
         }
     </style>
 </head>
@@ -294,25 +284,18 @@
         
     </div>
     <div id="chat_bubble_row">
+        <h1 id="nick_placeholder" style="margin-top:10px; line-height:80px; color: white;"></h1>
         <div id="new_room_button" onclick="openRoomCreator()">
             +
         </div>
-        <div class="chat_bubble" onclick="joinRoom('nazwa_pokojuuu')">
-            <h5 class="chat_bubble_text">Pokój1</h5>
-        </div>
-        <div class="chat_bubble">
-            <h5 class="chat_bubble_text">Pokój2</h5>
-        </div>
-        <div class="chat_bubble">
-            <h5 class="chat_bubble_text">Pokój3</h5>
-        </div>
+        <div id="chat_rooms"></div>
     </div>
     <div id="room_header_row">
         <div class="chat_bubble" onclick="leaveRoom()">
             <h5 class="chat_bubble_text leave_button">Opuść</h5>
         </div>
         <h5 class="chat_bubble_text marg10">Wybrany pokój:</h5>
-        <span class="chat_bubble_text inline_span marg10">Pokój 1</span>
+        <span class="chat_bubble_text inline_span marg10" id="chosen_room"></span>
         <h1></h1>
     </div>
     
@@ -323,9 +306,9 @@
 
 
 
-    <ul id="typing"></ul>
-    <form id="form" action="">
-        <input id="input" autocomplete="off" /><button>Wyślij</button>
+    <ul id="typing" style="text-decoration: none;"></ul>
+    <form id="form" onsubmit="newMessage()">
+        <input id="input" autocomplete="off" /><button type="submit">Wyślij</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -337,8 +320,27 @@
         //   console.log(event, args);
         // });
 
+        var form = document.getElementById("form");
+
+        function newMessage(event){
+            var val = document.getElementById("input").value;
+            if(val !== ""){
+                event.preventDefault();
+                sendMsg(document.getElementById("input").value);
+                document.getElementById("input").value="";
+            }
+        }
+        form.addEventListener("submit", newMessage);
+
+        var inputField = document.getElementById("input");
+        inputField.addEventListener("focus", startTyping);
+        inputField.addEventListener("blur", stopTyping);
+
         function myConnect() {
-            connectToServer(document.getElementById("login_input").value);
+            var user = document.getElementById("login_input").value;
+            connectToServer(user);
+            document.getElementById("login_window").style.display = "none";
+            document.getElementById("nick_placeholder").innerHTML = user;
         }
 
         function connectToServer(name){ //use it to establish connection to server
@@ -348,13 +350,13 @@
         }
 
         var availableRooms = [];
-        socket.on('created room', (name)=>{
-            availableRooms.push(name); 
+        socket.on('created room', (rooms)=>{
+            availableRooms = rooms;
             updateRoomList();
         });
 
-        socket.on('deleted room', (name)=>{
-            availableRooms = availableRooms.splice(availableRooms.indexOf(name), 1);
+        socket.on('deleted room', (rooms)=>{
+            availableRooms = rooms;
             updateRoomList();
         });
 
@@ -369,14 +371,17 @@
         }
 
         function addRoom() {
+            leaveRoom(document.getElementById("chosen_room").value);
+            joinRoom(document.getElementById("room_input").value);
             closeRoomCreator()
         }
         
         function sendMsg(message){ //use it for sending msgs
-            const payload = {"id": socket.id, "username": socket.username, "type": "message", "content": message, "timestamp": Date.now()};
+            const payload = {"id": socket.id, "username": username, "type": "message", "content": message, "timestamp": Date.now()};
+            console.log(payload.timestamp);
             socket.emit('to server', payload);
             document.getElementById("messages").innerHTML += 
-                `<li>
+                `<li style="align-self: flex-end;">
                     <div class="my_messages message">
                         ${message}</br>
                         <span class="time">${new Date(Date.now())}</span>
@@ -401,10 +406,11 @@
         });
 
         function handleReceivedMessage(msg){ //use it to handle msgs
+            console.log(msg);
             const username = msg.username;
             const type = msg.type;
             const message = msg.content;
-            const time = msg.time;
+            const time = msg.timestamp;
             if(type === "message"){
                 document.getElementById("messages").innerHTML +=
                     `<li>
@@ -416,7 +422,7 @@
                     </li>`;
             }else if(type === "join" || type === "left"){
                 document.getElementById("messages").innerHTML += 
-                    `<li>
+                    `<li style="align-self: center;">
                         <div class="info_messages message">
                             ${message}
                         </div>
@@ -424,23 +430,21 @@
             }
         }
 
-        var currentlyTypingUsers = [];
+        var currentlyTypingUsers = new Set();
         socket.on('started typing', (name)=>{
-            currentlyTypingUsers.push(name); 
+            currentlyTypingUsers.add(name); 
             updateTypingUsersList();
         });
 
         socket.on('stopped typing', (name)=>{
-            if (currentlyTypingUsers.indexOf(name) !== -1){
-                currentlyTypingUsers = currentlyTypingUsers.splice(currentlyTypingUsers.indexOf(name), 1);
-            }
+            currentlyTypingUsers.delete(name);
             updateTypingUsersList();
         });
 
         function updateTypingUsersList(){//it is called when list of currently typing user changes
             var typingUsers = "";
-            currentlyTypingUsers.forEach((name)=>{
-                typingUsers = typingUsers.concat(`<li>${name} is typing...</li>`);
+            currentlyTypingUsers.forEach((k, v)=>{
+                typingUsers = typingUsers.concat(`<li>${k} is typing...</li>`);
             });
             document.getElementById("typing").innerHTML = typingUsers;
         }
@@ -454,27 +458,32 @@
         }
 
         function updateRoomList(){ //it is called when list of room changes
+            document.getElementById("chat_rooms").innerHTML = "";
             availableRooms.forEach(room => {
-            document.getElementById("chat_bubble_row").appendChild(
-                `<div class="chat_bubble" onclick="joinRoom('${room.roomname}')">
-                    <h5 class="chat_bubble_text">${room.roomname}</h5>
-                </div>`
-            )
-        });
+                document.getElementById("chat_rooms").innerHTML +=
+                    `<div class="chat_bubble" onclick="joinRoom('${room}')">
+                        <h5 class="chat_bubble_text">${room}</h5>
+                    </div>`;
+                }
+            );
         }
 
         function joinRoom(roomname){ //use it to join to a room
+            document.getElementById("messages").innerHTML = "";
             document.getElementById("messages").style.display = "flex";
             document.getElementById("form").style.display = "flex";
             document.getElementById("room_header_row").style.display = "flex";
+            document.getElementById("chosen_room").innerHTML = roomname;
             socket.emit('join room', roomname);
         }
 
-        function leaveRoom(roomname){ //use it to leave a room
+        function leaveRoom(){ //use it to leave a room
+            var roomname = document.getElementById("chosen_room").innerHTML;
             document.getElementById("messages").style.display = "none";
+            document.getElementById("messages").innerHTML = "";
             document.getElementById("form").style.display = "none";
             document.getElementById("room_header_row").style.display = "none";
-            currentlyTypingUsers = [];
+            currentlyTypingUsers = new Set();
             socket.emit('leave room', roomname);
         }
 
