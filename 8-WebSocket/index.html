@@ -58,16 +58,171 @@
         #messages>li:nth-child(odd) {
             background: #efefef;
         }
+
+        #chat_bubble_row {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            background-color: #333;
+            height: 100px;
+
+        }
+        .chat_bubble {
+            width: 300px;
+            height: 80px;
+            background-color: rgb(163, 202, 166);
+            margin-top: 10px;
+            border-radius: 30px;
+            margin-left: 2px;
+            margin-right: 2px;
+            cursor: pointer;
+        }
+        .chat_bubble_text {
+            color: black;
+            font-size: 40px;
+            margin: 0;
+            line-height: 80px;
+            text-align: center;
+            color: white;
+        }
+        #new_room_button {
+            flex-direction: left;
+            background-color: white;
+            width:80px;
+            height: 80px;
+            margin-top: 10px;
+            border-radius: 30px;
+            font-size: 100px;
+            font-weight: bold;
+            line-height: 65px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        #room_creator{
+            display: none;
+            background-color: black;
+            border-radius: 100px;
+            width: 900px;
+            height: 500px;
+            position: absolute;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .room_creator_info {
+            background-color: white;
+            margin: auto;
+            margin-top: 50px;
+            padding: 20px;
+            width: 700px;
+            border-radius: 30px;
+            text-align: center;
+            font-size: 50px;
+            font-weight: bold;
+        }
+        .room_buttons_row {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 60px;
+        }
+        .room_creator_add {
+            background-color: green;
+            color: white;
+            font-size: 50px;
+            font-weight: bold;
+            width: 200px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            line-height: 55px;
+        }
+        .room_creator_cancel {
+            background-color: rgb(203, 82, 82);
+            color: white;
+            font-size: 50px;
+            font-weight: bold;
+            width: 200px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            line-height: 55px;
+        }
+        .room_form {
+            width: 708px;
+            margin: auto
+        }
+        .room_input {
+            border-radius: 20px;
+            height: 70px;
+            margin-top: 60px;
+            width: 700px;
+            text-align: center;
+            font-size: 50px;
+            background-color: rgb(163, 202, 166);
+            color: white;
+            font-weight: bold;
+        }
     </style>
 </head>
 
 <body>
+    <div id="room_creator">
+        <div class="room_creator_info">
+            Podaj nazwę nowego pokoju:
+        </div>
+        <form class="room_form">
+            <input class="room_input" maxlength="20" name="room_name"/>
+        </form>
+        <div class="room_buttons_row">
+            <div class="room_creator_add" onclick="addRoom()">
+                Utwórz
+            </div>
+            <div class="room_creator_cancel" onclick="closeRoomCreator()">
+                Anuluj
+            </div>
+        </div>
+        
+    </div>
+    <div id="chat_bubble_row">
+        <div id="new_room_button" onclick="openRoomCreator()">
+            +
+        </div>
+        <div class="chat_bubble" onclick="changeRoom(1)">
+            <h5 class="chat_bubble_text">Pokój 1</h5>
+        </div>
+        <div class="chat_bubble">
+            <h5 class="chat_bubble_text">Pokój 2</h5>
+        </div>
+        <div class="chat_bubble">
+            <h5 class="chat_bubble_text">Pokój 3</h5>
+        </div>
+    </div>
     <ul id="messages"></ul>
     <form id="form" action="">
         <input id="input" autocomplete="off" /><button>Send</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        function openRoomCreator() {
+            document.getElementById("room_creator").style.display="block";
+        }
+
+        function closeRoomCreator() {
+            document.getElementById("room_creator").style.display="none";
+        }
+
+        function addRoom() {
+            closeRoomCreator()
+        }
+
+        function changeRoom(index) {
+            console.log("change room to: " + index);
+        }
+        
         var socket = io();
         var username = "abc test";
 
