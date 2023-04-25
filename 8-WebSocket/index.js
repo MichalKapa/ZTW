@@ -38,8 +38,8 @@ io.on('connection', (socket) => {
     socket.on('started typing', name =>{
       socket.rooms.forEach((room, _)=>{
         socket.to(room).emit("started typing", name);
+        console.log(`${name} is typing in room ${room}`);
       });
-      console.log(`${name} is typing`);
     });
 
     socket.on('stopped typing', name =>{

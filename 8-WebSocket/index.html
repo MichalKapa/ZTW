@@ -55,9 +55,9 @@
             padding: 0.5rem 1rem;
         }
 
-        #messages>li:nth-child(odd) {
+        /* #messages>li:nth-child(odd) {
             background: #efefef;
-        }
+        } */
 
         #chat_bubble_row {
             width: 100%;
@@ -184,6 +184,20 @@
             background-color: rgb(145, 35, 35);
             border-radius: 30px;
         }
+        .me{
+            background-color: blue;
+            color: #fff;
+            text-align: right;
+        }
+        .other{
+            background-color: #757171;
+            color: black;
+            text-align: left;
+        }
+        .join-left {
+            color:#333;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -284,7 +298,8 @@
         function sendMsg(message){ //use it for sending msgs
             const payload = {"id": socket.id, "username": socket.username, "type": "message", "content": message, "timestamp": Date.now()};
             socket.emit('to server', payload);
-            //add element with message to page
+            document.getElementById("messages").innerHTML =
+                document.getElementById("messages").innerHTML.concat(`<li class="me">${message} </br> ${new Date(Date.now())}</li>`);
         }
 
         function sendImage(image){
@@ -299,10 +314,17 @@
 
         function handleReceivedMessage(msg){ //use it to handle msgs
             // const id = msg.id;
-            // const username = msg.username;
-            // const type = msg.type;
-            // const content = msg.content;
-            // const time = msg.time;
+            const username = msg.username;
+            const type = msg.type;
+            const message = msg.content;
+            const time = msg.time;
+            if(type === "message"){
+                document.getElementById("messages").innerHTML =
+                    document.getElementById("messages").innerHTML.concat(`<li class="other">${message} </br> ${username}  ${new Date(time)}</li>`);
+            }else if(type === "join" || type === "left"){
+                document.getElementById("messages").innerHTML =
+                    document.getElementById("messages").innerHTML.concat(`<li class="join-left">${message}</li>`);
+            }
         }
 
         var currentlyTypingUsers = [];
@@ -312,16 +334,18 @@
         });
 
         socket.on('stopped typing', (name)=>{
-            currentlyTypingUsers = currentlyTypingUsers.splice(currentlyTypingUsers.indexOf(name), 1);
+            if (currentlyTypingUsers.indexOf(name) !== -1){
+                currentlyTypingUsers = currentlyTypingUsers.splice(currentlyTypingUsers.indexOf(name), 1);
+            }
             updateTypingUsersList();
         });
 
         function updateTypingUsersList(){//it is called when list of currently typing user changes
-            typingUsers = "";
+            var typingUsers = "";
             currentlyTypingUsers.forEach((name)=>{
-                typingUsers.append(`<li>${name} is typing...</li>`);
+                typingUsers = typingUsers.concat(`<li>${name} is typing...</li>`);
             });
-            Document.getElementById("typing").innerHTML = typingUsers;
+            document.getElementById("typing").innerHTML = typingUsers;
         }
 
         function startTyping(){ //call it when user started typing
