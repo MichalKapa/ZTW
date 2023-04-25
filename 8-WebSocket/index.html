@@ -68,24 +68,19 @@
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        var socket = io();
-        var username = "abc test";
-
+        const socket = io("http://localhost:3000", {autoConnect: false});
+        var username = "";
         // for debug and development
         // socket.onAny((event, ...args) => {
         //   console.log(event, args);
         // });
 
-        // socket.auth = username;
-        // socket.connect();
+        function connectToServer(name){ //use it to establish connection to server
+            username = name;
+            socket.auth = {username};
+            socket.connect();
+        }
       
-        // socket.on(roomname, function(msg) {
-        //   var item = document.createElement('li');
-        //   item.textContent = msg.content+ msg.who;
-        //   messages.appendChild(item);
-        //   window.scrollTo(0, document.body.scrollHeight);
-        // });
-
         var availableRooms = [];
         socket.on('created room', (name)=>{
             availableRooms.push(name); 
@@ -104,7 +99,8 @@
         }
 
         socket.on('chat', (msg) => {
-            handleReceivedMessage();
+            console.log(JSON.stringify(msg));
+            handleReceivedMessage(msg);
         });
 
         function handleReceivedMessage(msg){ //use it to handle msgs
@@ -112,7 +108,6 @@
             // const receivedUsername = msg.username;
             // const receivedType = msg.type;
             // const receivedContent = msg.content;
-            console.log(msg);
         }
 
         var currentlyTypingUsers = [];
@@ -147,6 +142,7 @@
         }
 
         function leaveRoom(roomname){ //use it to leave a room
+            currentlyTypingUsers = [];
             socket.emit('leave room', roomname);
         }
 

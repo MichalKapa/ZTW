@@ -5,13 +5,6 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
-// const httpServer = require("http").createServer();
-// const io = require("socket.io")(httpServer, {
-//   cors: {
-//     origin: "http://localhost:3000",
-//   },
-// });
-
 const roomsHistory = {};
 
 app.get('/', (req, res) => {
@@ -19,17 +12,8 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    console.log(`a user ${socket.id} connected`);
-
-    socket.rooms.forEach((name, _) =>{
-      socket.leave(name);
-      // console.log(`${socket.id} left room ${name}`);
-    });
-    
+    // console.log(`a user ${socket.username} connected`);
     socket.on('join room', (roomname) => {
-      socket.rooms.forEach((v1, v2, set) =>{
-        socket.leave(v1);
-      })
       socket.join(roomname);
     });
 
@@ -46,7 +30,7 @@ io.on('connection', (socket) => {
         socket.to(room).emit('chat', msg);
         roomsHistory[room].push(msg);
       });
-        console.log('message: ' + msg);
+        console.log(`"${socket.username}" wrote "${msg.content}"`);
     });
 
     socket.on('started typing', name =>{
@@ -58,42 +42,47 @@ io.on('connection', (socket) => {
     });
   });
 
-// io.use((socket, next) => {
-//     const username = socket.handshake.auth.username;
-//     if (!username) {
-//         return next(new Error("invalid username"));
-//     }
-//     socket.username = username;
-//     send available rooms to user
-//     next();
-// });
+io.use((socket, next) => {
+    const username = socket.handshake.auth.username;
+    if (!username) {
+        return next(new Error("invalid username"));
+    }
+    socket.username = username;
+    next();
+    io.of("/").adapter.rooms.forEach((k, v)=>{
+      io.to(socket).emit("created room", v);
+    });
+});
 
 io.of("/").adapter.on("create-room", (room) => {
     if (roomsHistory[room] === undefined){
       roomsHistory[room] = [];
     }
-    console.log(`room ${room} was created`);
+    console.log(`Room "${room}" created`);
     io.emit('created room', room);
 });
   
 io.of("/").adapter.on("delete-room", (room) => {
-    console.log(`room ${room} was deleted`);
+    console.log(`Room "${room}" deleted`);
     io.emit('deleted room', room);
 });
 
 io.of("/").adapter.on("join-room", (room, id) => {
     const joiningSocket = io.sockets.sockets.get(id);
-    console.log(`${joiningSocket.username} has joined room ${room}`);
+    console.log(`"${joiningSocket.username}" joined room "${room}"`);
+    const msg = {"id": id, "username": joiningSocket.username, "type":"join", "content": `${joiningSocket.username} has joined`};
     io.to(id).emit('chat', roomsHistory[room]);
-    io.in(room).emit('chat', {"id": id, "username": joiningSocket.username, "type":"join", "content": `${joiningSocket.username} has joined`});
+    roomsHistory[room].push(msg);
+    io.in(room).emit('chat', msg);
 });
 
 io.of("/").adapter.on("leave-room", (room, id) => {
     const leavinSocket = io.sockets.sockets.get(id);
-    console.log(`${leavinSocket.username} has left room ${room}`);
-    io.in(room).emit('chat', {"id": id, "username": leavinSocket.username, "type":"left", "content": `${leavinSocket.username} has left`});
+    console.log(`"${leavinSocket.username}" left room "${room}"`);
+    const msg = {"id": id, "username": leavinSocket.username, "type":"left", "content": `${leavinSocket.username} has left`};
+    io.in(room).emit('chat', msg);
+    roomsHistory[room].push(msg);
 });
-
 
 server.listen(3000, () =>
   console.log('server listening at http://localhost:3000')
