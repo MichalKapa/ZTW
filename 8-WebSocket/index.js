@@ -1,11 +1,13 @@
 const express = require('express');
+const { writeFile } = require('fs');
 const app = express();
 const http = require('http');
-const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const server = http.createServer(app);
+const io = new Server(server, {maxHttpBufferSize: 1e8});
 
 const roomsHistory = {};
+var privateRooms = [];
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname+'/index.html');
@@ -34,11 +36,23 @@ io.on('connection', (socket) => {
     });
 
     socket.on('started typing', name =>{
+      socket.rooms.forEach((room, _)=>{
+        socket.to(room).emit("started typing", name);
+      });
       console.log(`${name} is typing`);
     });
 
     socket.on('stopped typing', name =>{
+      socket.rooms.forEach((room, _)=>{
+        socket.to(room).emit("stopped typing", name);
+      });
       console.log(`${name} is not typing anymore`);
+    });
+
+    socket.on('upload', (file, callback) =>{
+        writeFile("/tmp/upload", file, (err)=>{
+          callback({ message: err ? "failure" : "success" });
+        });
     });
   });
 
@@ -49,8 +63,11 @@ io.use((socket, next) => {
     }
     socket.username = username;
     next();
+    privateRooms.push(socket.id);
     io.of("/").adapter.rooms.forEach((k, v)=>{
-      io.to(socket).emit("created room", v);
+      if(!privateRooms.includes(v)){
+        io.to(socket).emit("created room", v);
+      }
     });
 });
 
@@ -70,7 +87,7 @@ io.of("/").adapter.on("delete-room", (room) => {
 io.of("/").adapter.on("join-room", (room, id) => {
     const joiningSocket = io.sockets.sockets.get(id);
     console.log(`"${joiningSocket.username}" joined room "${room}"`);
-    const msg = {"id": id, "username": joiningSocket.username, "type":"join", "content": `${joiningSocket.username} has joined`};
+    const msg = {"id": id, "username": joiningSocket.username, "type":"join", "content": `${joiningSocket.username} has joined`, "time": Date.now()};
     io.to(id).emit('chat', roomsHistory[room]);
     roomsHistory[room].push(msg);
     io.in(room).emit('chat', msg);
@@ -79,7 +96,7 @@ io.of("/").adapter.on("join-room", (room, id) => {
 io.of("/").adapter.on("leave-room", (room, id) => {
     const leavinSocket = io.sockets.sockets.get(id);
     console.log(`"${leavinSocket.username}" left room "${room}"`);
-    const msg = {"id": id, "username": leavinSocket.username, "type":"left", "content": `${leavinSocket.username} has left`};
+    const msg = {"id": id, "username": leavinSocket.username, "type":"left", "content": `${leavinSocket.username} has left`, "time": Date.now()};
     io.in(room).emit('chat', msg);
     roomsHistory[room].push(msg);
 });

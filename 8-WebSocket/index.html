@@ -255,7 +255,6 @@
         <h1></h1>
     </div>
     
-
     <ul id="messages">
         
         <div class="other_messages message">
@@ -274,6 +273,13 @@
 
 
     </ul>
+
+
+
+    <ul id="typing"></ul>
+
+
+
     <form id="form" action="">
         <input id="input" autocomplete="off" /><button>Wyślij</button>
     </form>
@@ -345,23 +351,29 @@
         function addRoom() {
             closeRoomCreator()
         }
-
+        
         function sendMsg(message){ //use it for sending msgs
-            const payload = {"id": socket.id, "username": socket.username, "type": "message", "content": message};
+            const payload = {"id": socket.id, "username": socket.username, "type": "message", "content": message, "timestamp": Date.now()};
             socket.emit('to server', payload);
             //add element with message to page
         }
 
+        function sendImage(image){
+            socket.emit("upload", image, (status)=>{
+                console.log(status);
+            });
+        }
+
         socket.on('chat', (msg) => {
-            console.log(JSON.stringify(msg));
             handleReceivedMessage(msg);
         });
 
         function handleReceivedMessage(msg){ //use it to handle msgs
-            // const receivedId = msg.id;
-            // const receivedUsername = msg.username;
-            // const receivedType = msg.type;
-            // const receivedContent = msg.content;
+            // const id = msg.id;
+            // const username = msg.username;
+            // const type = msg.type;
+            // const content = msg.content;
+            // const time = msg.time;
         }
 
         var currentlyTypingUsers = [];
@@ -376,7 +388,11 @@
         });
 
         function updateTypingUsersList(){//it is called when list of currently typing user changes
-            //currentlyTypingUsers
+            typingUsers = "";
+            currentlyTypingUsers.forEach((name)=>{
+                typingUsers.append(`<li>${name} is typing...</li>`);
+            });
+            Document.getElementById("typing").innerHTML = typingUsers;
         }
 
         function startTyping(){ //call it when user started typing
