@@ -69,40 +69,87 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io();
-      
-        var messages = document.getElementById('messages');
-        var form = document.getElementById('form');
-        var input = document.getElementById('input');
-      
-        var username = "";
-        var roomname = "abc";
+        var username = "abc test";
 
-        //for debug and development
+        // for debug and development
         // socket.onAny((event, ...args) => {
         //   console.log(event, args);
         // });
 
-
         // socket.auth = username;
         // socket.connect();
-
-
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-          if (input.value) {
-            socket.emit(roomname, {"who": username, "content": input.value});
-            input.value = '';
-          }
-        });
       
-        socket.on(roomname, function(msg) {
-          var item = document.createElement('li');
-          item.textContent = msg.content+ msg.who;
-          messages.appendChild(item);
-          window.scrollTo(0, document.body.scrollHeight);
+        // socket.on(roomname, function(msg) {
+        //   var item = document.createElement('li');
+        //   item.textContent = msg.content+ msg.who;
+        //   messages.appendChild(item);
+        //   window.scrollTo(0, document.body.scrollHeight);
+        // });
+
+        var availableRooms = [];
+        socket.on('created room', (name)=>{
+            availableRooms.push(name); 
+            updateRoomList();
         });
 
-        
+        socket.on('deleted room', (name)=>{
+            availableRooms = availableRooms.splice(availableRooms.indexOf(name), 1);
+            updateRoomList();
+        });
+
+        function sendMsg(message){ //use it for sending msgs
+            const payload = {"id": socket.id, "username": socket.username, "type": "message", "content": message};
+            socket.emit('to server', payload);
+            //add element with message to page
+        }
+
+        socket.on('chat', (msg) => {
+            handleReceivedMessage();
+        });
+
+        function handleReceivedMessage(msg){ //use it to handle msgs
+            // const receivedId = msg.id;
+            // const receivedUsername = msg.username;
+            // const receivedType = msg.type;
+            // const receivedContent = msg.content;
+            console.log(msg);
+        }
+
+        var currentlyTypingUsers = [];
+        socket.on('started typing', (name)=>{
+            currentlyTypingUsers.push(name); 
+            updateTypingUsersList();
+        });
+
+        socket.on('stopped typing', (name)=>{
+            currentlyTypingUsers = currentlyTypingUsers.splice(currentlyTypingUsers.indexOf(name), 1);
+            updateTypingUsersList();
+        });
+
+        function updateTypingUsersList(){//it is called when list of currently typing user changes
+            //currentlyTypingUsers
+        }
+
+        function startTyping(){ //call it when user started typing
+            socket.emit("started typing", username);
+        }
+
+        function stopTyping(){ //call it when user stopped typing
+            socket.emit("stopped typing", username);
+        }
+
+        function updateRoomList(){ //it is called when list of room changes
+            //availableRooms
+        }
+
+        function joinRoom(roomname){ //use it to join to a room
+            socket.emit('join room', roomname);
+        }
+
+        function leaveRoom(roomname){ //use it to leave a room
+            socket.emit('leave room', roomname);
+        }
+
       </script>
 </body>
 

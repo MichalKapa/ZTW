@@ -12,37 +12,50 @@ const io = new Server(server);
 //   },
 // });
 
+const roomsHistory = {};
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname+'/index.html');
 });
 
 io.on('connection', (socket) => {
-    console.log('a user connected');
-    console.log(socket.id);
-    // console.log(socket.rooms);
-    socket.join("test_room");
-    // console.log(socket.rooms);
-    
-    socket.on('disconnect', () => {
-        socket.rooms.forEach((callback) => {
+    console.log(`a user ${socket.id} connected`);
 
-        })
+    socket.rooms.forEach((name, _) =>{
+      socket.leave(name);
+      // console.log(`${socket.id} left room ${name}`);
+    });
+    
+    socket.on('join room', (roomname) => {
+      socket.rooms.forEach((v1, v2, set) =>{
+        socket.leave(v1);
+      })
+      socket.join(roomname);
+    });
+
+    socket.on('leave room', (roomname) =>{
+      socket.leave(roomname);
+    });
+
+    socket.on('disconnect', () => {
       console.log('user disconnected');
     });
 
-    socket.on('chat message', (msg) => {
+    socket.on('to server', (msg) => {
+      socket.rooms.forEach((room, _)=>{
+        socket.to(room).emit('chat', msg);
+        roomsHistory[room].push(msg);
+      });
         console.log('message: ' + msg);
     });
 
-    socket.on('abc', (msg) => {
-        console.log("abc message" + msg);
-        io.emit('abc', msg);
+    socket.on('started typing', name =>{
+      console.log(`${name} is typing`);
     });
 
-    // socket.join("abc");
-    // io.to("abc").emit({"who": "nie wiemy", "content": "dołączył"});
-
+    socket.on('stopped typing', name =>{
+      console.log(`${name} is not typing anymore`);
+    });
   });
 
 // io.use((socket, next) => {
@@ -51,64 +64,37 @@ io.on('connection', (socket) => {
 //         return next(new Error("invalid username"));
 //     }
 //     socket.username = username;
+//     send available rooms to user
 //     next();
 // });
 
-// const rooms = io.of("/").adapter.rooms;
-// const sids = io.of("/").adapter.sids;
-
 io.of("/").adapter.on("create-room", (room) => {
+    if (roomsHistory[room] === undefined){
+      roomsHistory[room] = [];
+    }
     console.log(`room ${room} was created`);
+    io.emit('created room', room);
 });
   
 io.of("/").adapter.on("delete-room", (room) => {
     console.log(`room ${room} was deleted`);
+    io.emit('deleted room', room);
 });
 
 io.of("/").adapter.on("join-room", (room, id) => {
-    console.log(`socket ${id} has joined room ${room}`);
-    io.in(room).emit('users', `socket ${id} has joined`);
+    const joiningSocket = io.sockets.sockets.get(id);
+    console.log(`${joiningSocket.username} has joined room ${room}`);
+    io.to(id).emit('chat', roomsHistory[room]);
+    io.in(room).emit('chat', {"id": id, "username": joiningSocket.username, "type":"join", "content": `${joiningSocket.username} has joined`});
 });
 
 io.of("/").adapter.on("leave-room", (room, id) => {
-    console.log(`socket ${id} has joined room ${room}`);
-    io.in(room).emit('users', `socket ${id} has left`);
+    const leavinSocket = io.sockets.sockets.get(id);
+    console.log(`${leavinSocket.username} has left room ${room}`);
+    io.in(room).emit('chat', {"id": id, "username": leavinSocket.username, "type":"left", "content": `${leavinSocket.username} has left`});
 });
 
 
 server.listen(3000, () =>
   console.log('server listening at http://localhost:3000')
 );
-
-// io.of("/").adapter.on("create-room", (room) => {
-//     console.log(`room ${room} was created`);
-//   });
-  
-//   io.of("/").adapter.on("join-room", (room, id) => {
-//     console.log(`socket ${id} has joined room ${room}`);
-//   });
-
-  
-// const app = require('express')();
-// const http = require('http').Server(app);
-// const io = require('socket.io')(http);
-// const port = process.env.PORT || 3000;
-
-// app.get('/', (req, res) => {
-//   res.sendFile(__dirname + '/index.html');
-// });
-
-// io.on('connection', (socket) => {
-//   socket.on('chat message', msg => {
-//     io.emit('chat message', msg);
-//   });
-// });
-
-// http.listen(port, () => {
-//   console.log(`Socket.IO server running at http://localhost:${port}/`);
-// });
-
-// create-room
-// delete-room
-// join-room
-// leave-room
