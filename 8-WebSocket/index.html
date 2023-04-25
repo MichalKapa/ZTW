@@ -234,10 +234,48 @@
             color:#333;
             text-align: center;
         }
+        #login_window {
+            background-color: black;
+            border-radius: 100px;
+            width: 900px;
+            height: 500px;
+            position: absolute;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .center_submit {
+            margin: auto;
+            width: 230px;
+        }
+        #login_input {
+            border-radius: 20px;
+            height: 70px;
+            margin-top: 60px;
+            width: 700px;
+            text-align: center;
+            font-size: 50px;
+            background-color: rgb(163, 202, 166);
+            color: white;
+            font-weight: bold;
+            margin-bottom: 70px;
+        }
     </style>
 </head>
 
 <body>
+    <div id="login_window">
+        <div class="room_creator_info">
+            Podaj nazwę:
+        </div>
+        <form class="room_form">
+            <input id="login_input" type="text" maxlength="20" name="room_name"/>
+        </form>
+        <div class="room_creator_add center_submit" onclick="myConnect()">
+            Potwierdź
+        </div>
+    </div>
     <div id="room_creator">
         <div class="room_creator_info">
             Podaj nazwę nowego pokoju:
@@ -280,6 +318,11 @@
     
     <ul id="messages">
     </ul>
+
+    
+
+
+
     <ul id="typing"></ul>
     <form id="form" action="">
         <input id="input" autocomplete="off" /><button>Wyślij</button>
@@ -289,6 +332,14 @@
         const socket = io("http://localhost:3000", {autoConnect: false});
         // const moment = 
         var username = "";
+        // for debug and development
+        // socket.onAny((event, ...args) => {
+        //   console.log(event, args);
+        // });
+
+        function myConnect() {
+            connectToServer(document.getElementById("login_input").value);
+        }
 
         function connectToServer(name){ //use it to establish connection to server
             username = name;
