@@ -166,6 +166,24 @@
             color: white;
             font-weight: bold;
         }
+        .inline_span {
+            display: inline;
+        }
+        .marg10 {
+            margin-top: 10px;
+        }
+
+        #room_header_row {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            background-color: #757171;
+            height: 100px;
+        }
+        .leave_button {
+            background-color: rgb(145, 35, 35);
+            border-radius: 30px;
+        }
     </style>
 </head>
 
@@ -191,22 +209,61 @@
         <div id="new_room_button" onclick="openRoomCreator()">
             +
         </div>
-        <div class="chat_bubble" onclick="changeRoom(1)">
-            <h5 class="chat_bubble_text">Pokój 1</h5>
+        <div class="chat_bubble" onclick="joinRoom('nazwa_pokojuuu')">
+            <h5 class="chat_bubble_text">Pokój1</h5>
         </div>
         <div class="chat_bubble">
-            <h5 class="chat_bubble_text">Pokój 2</h5>
+            <h5 class="chat_bubble_text">Pokój2</h5>
         </div>
         <div class="chat_bubble">
-            <h5 class="chat_bubble_text">Pokój 3</h5>
+            <h5 class="chat_bubble_text">Pokój3</h5>
         </div>
     </div>
+    <div id="room_header_row">
+        <div class="chat_bubble" onclick="leaveRoom()">
+            <h5 class="chat_bubble_text leave_button">Opuść</h5>
+        </div>
+            <h5 class="chat_bubble_text marg10">Wybrany pokój:</h5>
+            <span class="chat_bubble_text inline_span marg10">Pokój 1</span>
+    </div>
+
     <ul id="messages"></ul>
     <form id="form" action="">
         <input id="input" autocomplete="off" /><button>Send</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        const socket = io("http://localhost:3000", {autoConnect: false});
+        var username = "";
+        // for debug and development
+        // socket.onAny((event, ...args) => {
+        //   console.log(event, args);
+        // });
+
+        function connectToServer(name){ //use it to establish connection to server
+            username = name;
+            socket.auth = {username};
+            socket.connect();
+        }
+
+        var availableRooms = [];
+        socket.on('created room', (name)=>{
+            availableRooms.push(name); 
+            updateRoomList();
+        });
+
+        socket.on('deleted room', (name)=>{
+            availableRooms = availableRooms.splice(availableRooms.indexOf(name), 1);
+            updateRoomList();
+        });
+
+        availableRooms.forEach(room => {
+            console.log(room)
+        });
+        // <div class="chat_bubble" onclick="joinRoom('nazwa_pokojuuu')">
+        //     <h5 class="chat_bubble_text">Pokój1</h5>
+        // </div>
+
         function openRoomCreator() {
             document.getElementById("room_creator").style.display="block";
         }
@@ -223,34 +280,8 @@
             console.log("change room to: " + index);
         }
         
-        var socket = io();
-        var username = "abc test";
-
-        // for debug and development
-        // socket.onAny((event, ...args) => {
-        //   console.log(event, args);
-        // });
-
-        // socket.auth = username;
-        // socket.connect();
       
-        // socket.on(roomname, function(msg) {
-        //   var item = document.createElement('li');
-        //   item.textContent = msg.content+ msg.who;
-        //   messages.appendChild(item);
-        //   window.scrollTo(0, document.body.scrollHeight);
-        // });
-
-        var availableRooms = [];
-        socket.on('created room', (name)=>{
-            availableRooms.push(name); 
-            updateRoomList();
-        });
-
-        socket.on('deleted room', (name)=>{
-            availableRooms = availableRooms.splice(availableRooms.indexOf(name), 1);
-            updateRoomList();
-        });
+        
 
         function sendMsg(message){ //use it for sending msgs
             const payload = {"id": socket.id, "username": socket.username, "type": "message", "content": message};
@@ -259,7 +290,8 @@
         }
 
         socket.on('chat', (msg) => {
-            handleReceivedMessage();
+            console.log(JSON.stringify(msg));
+            handleReceivedMessage(msg);
         });
 
         function handleReceivedMessage(msg){ //use it to handle msgs
@@ -267,7 +299,6 @@
             // const receivedUsername = msg.username;
             // const receivedType = msg.type;
             // const receivedContent = msg.content;
-            console.log(msg);
         }
 
         var currentlyTypingUsers = [];
@@ -302,6 +333,7 @@
         }
 
         function leaveRoom(roomname){ //use it to leave a room
+            currentlyTypingUsers = [];
             socket.emit('leave room', roomname);
         }
 
