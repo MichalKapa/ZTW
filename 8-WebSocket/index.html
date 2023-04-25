@@ -46,7 +46,7 @@
         }
 
         #messages {
-            display: none;
+            /* display: none; */
             flex-direction: column;
             list-style-type: none;
             margin: 0;
@@ -71,15 +71,24 @@
             color: white;
             text-align: left;
         }
-        
-        
 
         .my_messages {
             align-self: flex-end;
+            background-color: rgba(0, 0, 255, 0.3);
         }
 
         .other_messages {
             align-self: flex-start;
+        }
+
+        .info_messages{
+            align-self: center;
+            background-color: rgba(0, 0, 0, 0);
+            color:#757171;
+        }
+
+        .time{
+            font-size: 8px;
         }
 
         #chat_bubble_row {
@@ -270,41 +279,16 @@
     </div>
     
     <ul id="messages">
-        
-        <div class="other_messages message">
-            <span class="user_name">ktośinny:</span>
-            <li>otherMessage</li>
-        </div>
-
-        <div class="my_messages message">
-            <span class="user_name">ja:</span>
-            <li>myMessage</li>
-        </div>
-        <div class="other_messages message">
-            <span class="user_name">ktośinny:</span>
-            <li>otherMessage</li>
-        </div>
-
-
     </ul>
-
-
-
     <ul id="typing"></ul>
-
-
-
     <form id="form" action="">
         <input id="input" autocomplete="off" /><button>Wyślij</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io("http://localhost:3000", {autoConnect: false});
+        // const moment = 
         var username = "";
-        // for debug and development
-        // socket.onAny((event, ...args) => {
-        //   console.log(event, args);
-        // });
 
         function connectToServer(name){ //use it to establish connection to server
             username = name;
@@ -321,35 +305,6 @@
         socket.on('deleted room', (name)=>{
             availableRooms = availableRooms.splice(availableRooms.indexOf(name), 1);
             updateRoomList();
-        });
-
-        availableRooms.forEach(room => {
-            document.getElementById("chat_bubble_row").appendChild(
-
-            `<div class="chat_bubble" onclick="joinRoom('${room.roomname}')">
-                    <h5 class="chat_bubble_text">${room.roomname}</h5>
-                </div>`
-            )
-            
-        });
-
-        messageList.forEach(message => {
-            if (message.user.id == currentUserId) {
-                document.getElementById("messages").appendChild(
-                    `<div class="my_messages message">
-                        <span class="user_name">${message.user.name}:</span>
-                        <li>${message.text}</li>
-                    </div>`
-                )
-            }
-            else {
-                document.getElementById("messages").appendChild(
-                    `<div class="other_messages message">
-                        <span class="user_name">${message.user.name}:</span>
-                        <li>${message.text}</li>
-                    </div>`
-                )
-            }
         });
 
         function openRoomCreator() {
@@ -369,8 +324,13 @@
         function sendMsg(message){ //use it for sending msgs
             const payload = {"id": socket.id, "username": socket.username, "type": "message", "content": message, "timestamp": Date.now()};
             socket.emit('to server', payload);
-            document.getElementById("messages").innerHTML =
-                document.getElementById("messages").innerHTML.concat(`<li class="me">${message} </br> ${new Date(Date.now())}</li>`);
+            document.getElementById("messages").innerHTML += 
+                `<li>
+                    <div class="my_messages message">
+                        ${message}</br>
+                        <span class="time">${new Date(Date.now())}</span>
+                    </div>
+                </li>`;
         }
 
         function sendImage(image){
@@ -380,21 +340,36 @@
         }
 
         socket.on('chat', (msg) => {
-            handleReceivedMessage(msg);
+            if(Array.isArray(msg)){
+                msg.forEach((singleMsg)=>{
+                    handleReceivedMessage(singleMsg);
+                });
+            }else{
+                handleReceivedMessage(msg);
+            }
         });
 
         function handleReceivedMessage(msg){ //use it to handle msgs
-            // const id = msg.id;
             const username = msg.username;
             const type = msg.type;
             const message = msg.content;
             const time = msg.time;
             if(type === "message"){
-                document.getElementById("messages").innerHTML =
-                    document.getElementById("messages").innerHTML.concat(`<li class="other">${message} </br> ${username}  ${new Date(time)}</li>`);
+                document.getElementById("messages").innerHTML +=
+                    `<li>
+                        <div class="other_messages message">
+                            <span class="user_name">${username}:</span>
+                            ${message} </br>
+                            <span class="time">${new Date(time)}</span>
+                        </div>
+                    </li>`;
             }else if(type === "join" || type === "left"){
-                document.getElementById("messages").innerHTML =
-                    document.getElementById("messages").innerHTML.concat(`<li class="join-left">${message}</li>`);
+                document.getElementById("messages").innerHTML += 
+                    `<li>
+                        <div class="info_messages message">
+                            ${message}
+                        </div>
+                    </li>`;
             }
         }
 
@@ -428,7 +403,13 @@
         }
 
         function updateRoomList(){ //it is called when list of room changes
-            //availableRooms
+            availableRooms.forEach(room => {
+            document.getElementById("chat_bubble_row").appendChild(
+                `<div class="chat_bubble" onclick="joinRoom('${room.roomname}')">
+                    <h5 class="chat_bubble_text">${room.roomname}</h5>
+                </div>`
+            )
+        });
         }
 
         function joinRoom(roomname){ //use it to join to a room
