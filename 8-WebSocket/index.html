@@ -46,7 +46,7 @@
         }
 
         #messages {
-            display: none;
+            /* display: none; */
             flex-direction: column;
             list-style-type: none;
             margin: 0;
@@ -57,9 +57,9 @@
             padding: 0.5rem 1rem;
         }
 
-        #messages>li:nth-child(odd) {
+        /* #messages>li:nth-child(odd) {
             background: #efefef;
-        }
+        } */
 
         .message {
             font-size: 20px;
@@ -71,15 +71,24 @@
             color: white;
             text-align: left;
         }
-        
-        
 
         .my_messages {
             align-self: flex-end;
+            background-color: rgba(0, 0, 255, 0.3);
         }
 
         .other_messages {
             align-self: flex-start;
+        }
+
+        .info_messages{
+            align-self: center;
+            background-color: rgba(0, 0, 0, 0);
+            color:#757171;
+        }
+
+        .time{
+            font-size: 8px;
         }
 
         #chat_bubble_row {
@@ -211,6 +220,7 @@
             background-color: rgb(145, 35, 35);
             border-radius: 30px;
         }
+       
         #login_window {
             background-color: black;
             border-radius: 100px;
@@ -237,6 +247,9 @@
             color: white;
             font-weight: bold;
             margin-bottom: 70px;
+        }
+        #chat_rooms{
+            display: flex;
         }
     </style>
 </head>
@@ -271,69 +284,63 @@
         
     </div>
     <div id="chat_bubble_row">
+        <h1 id="nick_placeholder" style="margin-top:10px; line-height:80px; color: white;"></h1>
         <div id="new_room_button" onclick="openRoomCreator()">
             +
         </div>
-        <div class="chat_bubble" onclick="joinRoom('nazwa_pokojuuu')">
-            <h5 class="chat_bubble_text">Pokój1</h5>
-        </div>
-        <div class="chat_bubble">
-            <h5 class="chat_bubble_text">Pokój2</h5>
-        </div>
-        <div class="chat_bubble">
-            <h5 class="chat_bubble_text">Pokój3</h5>
-        </div>
+        <div id="chat_rooms"></div>
     </div>
     <div id="room_header_row">
         <div class="chat_bubble" onclick="leaveRoom()">
             <h5 class="chat_bubble_text leave_button">Opuść</h5>
         </div>
         <h5 class="chat_bubble_text marg10">Wybrany pokój:</h5>
-        <span class="chat_bubble_text inline_span marg10">Pokój 1</span>
+        <span class="chat_bubble_text inline_span marg10" id="chosen_room"></span>
         <h1></h1>
     </div>
     
     <ul id="messages">
-        
-        <div class="other_messages message">
-            <span class="user_name">ktośinny:</span>
-            <li>otherMessage</li>
-        </div>
-
-        <div class="my_messages message">
-            <span class="user_name">ja:</span>
-            <li>myMessage</li>
-        </div>
-        <div class="other_messages message">
-            <span class="user_name">ktośinny:</span>
-            <li>otherMessage</li>
-        </div>
-
-
     </ul>
 
     
 
 
 
-    <ul id="typing"></ul>
-
-
-
-    <form id="form" action="">
-        <input id="input" autocomplete="off" /><button>Wyślij</button>
+    <ul id="typing" style="text-decoration: none;"></ul>
+    <form id="form" onsubmit="newMessage()">
+        <input id="input" autocomplete="off" /><button type="submit">Wyślij</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io("http://localhost:3000", {autoConnect: false});
+        // const moment = 
         var username = "";
         // for debug and development
         // socket.onAny((event, ...args) => {
         //   console.log(event, args);
         // });
 
+        var form = document.getElementById("form");
+
+        function newMessage(event){
+            var val = document.getElementById("input").value;
+            if(val !== ""){
+                event.preventDefault();
+                sendMsg(document.getElementById("input").value);
+                document.getElementById("input").value="";
+            }
+        }
+        form.addEventListener("submit", newMessage);
+
+        var inputField = document.getElementById("input");
+        inputField.addEventListener("focus", startTyping);
+        inputField.addEventListener("blur", stopTyping);
+
         function myConnect() {
-            connectToServer(document.getElementById("login_input").value);
+            var user = document.getElementById("login_input").value;
+            connectToServer(user);
+            document.getElementById("login_window").style.display = "none";
+            document.getElementById("nick_placeholder").innerHTML = user;
         }
 
         function connectToServer(name){ //use it to establish connection to server
@@ -343,43 +350,14 @@
         }
 
         var availableRooms = [];
-        socket.on('created room', (name)=>{
-            availableRooms.push(name); 
+        socket.on('created room', (rooms)=>{
+            availableRooms = rooms;
             updateRoomList();
         });
 
-        socket.on('deleted room', (name)=>{
-            availableRooms = availableRooms.splice(availableRooms.indexOf(name), 1);
+        socket.on('deleted room', (rooms)=>{
+            availableRooms = rooms;
             updateRoomList();
-        });
-
-        availableRooms.forEach(room => {
-            document.getElementById("chat_bubble_row").appendChild(
-
-            `<div class="chat_bubble" onclick="joinRoom('${room.roomname}')">
-                    <h5 class="chat_bubble_text">${room.roomname}</h5>
-                </div>`
-            )
-            
-        });
-
-        messageList.forEach(message => {
-            if (message.user.id == currentUserId) {
-                document.getElementById("messages").appendChild(
-                    `<div class="my_messages message">
-                        <span class="user_name">${message.user.name}:</span>
-                        <li>${message.text}</li>
-                    </div>`
-                )
-            }
-            else {
-                document.getElementById("messages").appendChild(
-                    `<div class="other_messages message">
-                        <span class="user_name">${message.user.name}:</span>
-                        <li>${message.text}</li>
-                    </div>`
-                )
-            }
         });
 
         function openRoomCreator() {
@@ -393,13 +371,22 @@
         }
 
         function addRoom() {
+            leaveRoom(document.getElementById("chosen_room").value);
+            joinRoom(document.getElementById("room_input").value);
             closeRoomCreator()
         }
         
         function sendMsg(message){ //use it for sending msgs
-            const payload = {"id": socket.id, "username": socket.username, "type": "message", "content": message, "timestamp": Date.now()};
+            const payload = {"id": socket.id, "username": username, "type": "message", "content": message, "timestamp": Date.now()};
+            console.log(payload.timestamp);
             socket.emit('to server', payload);
-            //add element with message to page
+            document.getElementById("messages").innerHTML += 
+                `<li style="align-self: flex-end;">
+                    <div class="my_messages message">
+                        ${message}</br>
+                        <span class="time">${new Date(Date.now())}</span>
+                    </div>
+                </li>`;
         }
 
         function sendImage(image){
@@ -409,34 +396,57 @@
         }
 
         socket.on('chat', (msg) => {
-            handleReceivedMessage(msg);
+            if(Array.isArray(msg)){
+                msg.forEach((singleMsg)=>{
+                    handleReceivedMessage(singleMsg);
+                });
+            }else{
+                handleReceivedMessage(msg);
+            }
         });
 
         function handleReceivedMessage(msg){ //use it to handle msgs
-            // const id = msg.id;
-            // const username = msg.username;
-            // const type = msg.type;
-            // const content = msg.content;
-            // const time = msg.time;
+            console.log(msg);
+            const username = msg.username;
+            const type = msg.type;
+            const message = msg.content;
+            const time = msg.timestamp;
+            if(type === "message"){
+                document.getElementById("messages").innerHTML +=
+                    `<li>
+                        <div class="other_messages message">
+                            <span class="user_name">${username}:</span>
+                            ${message} </br>
+                            <span class="time">${new Date(time)}</span>
+                        </div>
+                    </li>`;
+            }else if(type === "join" || type === "left"){
+                document.getElementById("messages").innerHTML += 
+                    `<li style="align-self: center;">
+                        <div class="info_messages message">
+                            ${message}
+                        </div>
+                    </li>`;
+            }
         }
 
-        var currentlyTypingUsers = [];
+        var currentlyTypingUsers = new Set();
         socket.on('started typing', (name)=>{
-            currentlyTypingUsers.push(name); 
+            currentlyTypingUsers.add(name); 
             updateTypingUsersList();
         });
 
         socket.on('stopped typing', (name)=>{
-            currentlyTypingUsers = currentlyTypingUsers.splice(currentlyTypingUsers.indexOf(name), 1);
+            currentlyTypingUsers.delete(name);
             updateTypingUsersList();
         });
 
         function updateTypingUsersList(){//it is called when list of currently typing user changes
-            typingUsers = "";
-            currentlyTypingUsers.forEach((name)=>{
-                typingUsers.append(`<li>${name} is typing...</li>`);
+            var typingUsers = "";
+            currentlyTypingUsers.forEach((k, v)=>{
+                typingUsers = typingUsers.concat(`<li>${k} is typing...</li>`);
             });
-            Document.getElementById("typing").innerHTML = typingUsers;
+            document.getElementById("typing").innerHTML = typingUsers;
         }
 
         function startTyping(){ //call it when user started typing
@@ -448,21 +458,32 @@
         }
 
         function updateRoomList(){ //it is called when list of room changes
-            //availableRooms
+            document.getElementById("chat_rooms").innerHTML = "";
+            availableRooms.forEach(room => {
+                document.getElementById("chat_rooms").innerHTML +=
+                    `<div class="chat_bubble" onclick="joinRoom('${room}')">
+                        <h5 class="chat_bubble_text">${room}</h5>
+                    </div>`;
+                }
+            );
         }
 
         function joinRoom(roomname){ //use it to join to a room
+            document.getElementById("messages").innerHTML = "";
             document.getElementById("messages").style.display = "flex";
             document.getElementById("form").style.display = "flex";
             document.getElementById("room_header_row").style.display = "flex";
+            document.getElementById("chosen_room").innerHTML = roomname;
             socket.emit('join room', roomname);
         }
 
-        function leaveRoom(roomname){ //use it to leave a room
+        function leaveRoom(){ //use it to leave a room
+            var roomname = document.getElementById("chosen_room").innerHTML;
             document.getElementById("messages").style.display = "none";
+            document.getElementById("messages").innerHTML = "";
             document.getElementById("form").style.display = "none";
             document.getElementById("room_header_row").style.display = "none";
-            currentlyTypingUsers = [];
+            currentlyTypingUsers = new Set();
             socket.emit('leave room', roomname);
         }
 

@@ -38,8 +38,8 @@ io.on('connection', (socket) => {
     socket.on('started typing', name =>{
       socket.rooms.forEach((room, _)=>{
         socket.to(room).emit("started typing", name);
+        console.log(`${name} is typing in room ${room}`);
       });
-      console.log(`${name} is typing`);
     });
 
     socket.on('stopped typing', name =>{
@@ -65,7 +65,7 @@ io.use((socket, next) => {
     next();
     privateRooms.push(socket.id);
     io.of("/").adapter.rooms.forEach((k, v)=>{
-      if(!privateRooms.includes(v)){
+      if(!privateRooms.includes(v)){ //sprawdzic
         io.to(socket).emit("created room", v);
       }
     });
@@ -76,12 +76,27 @@ io.of("/").adapter.on("create-room", (room) => {
       roomsHistory[room] = [];
     }
     console.log(`Room "${room}" created`);
-    io.emit('created room', room);
+
+    var rooms = [];
+    io.of("/").adapter.rooms.forEach((k, v)=>{
+      if(!privateRooms.includes(v)){
+        rooms.push(v);
+      }
+    });
+    console.log("Pokoje "+ rooms);
+    io.emit('created room', rooms);
 });
   
 io.of("/").adapter.on("delete-room", (room) => {
     console.log(`Room "${room}" deleted`);
-    io.emit('deleted room', room);
+    var rooms = [];
+    io.of("/").adapter.rooms.forEach((k, v)=>{
+      if(!privateRooms.includes(v)){
+        rooms.push(v);
+      }
+    });
+    console.log("Pokoje "+ rooms);
+    io.emit('deleted room', rooms);
 });
 
 io.of("/").adapter.on("join-room", (room, id) => {
@@ -90,14 +105,18 @@ io.of("/").adapter.on("join-room", (room, id) => {
     const msg = {"id": id, "username": joiningSocket.username, "type":"join", "content": `${joiningSocket.username} has joined`, "time": Date.now()};
     io.to(id).emit('chat', roomsHistory[room]);
     roomsHistory[room].push(msg);
-    io.in(room).emit('chat', msg);
+    if(!privateRooms.includes(room)){
+      io.in(room).emit('chat', msg);
+    }
 });
 
 io.of("/").adapter.on("leave-room", (room, id) => {
     const leavinSocket = io.sockets.sockets.get(id);
     console.log(`"${leavinSocket.username}" left room "${room}"`);
     const msg = {"id": id, "username": leavinSocket.username, "type":"left", "content": `${leavinSocket.username} has left`, "time": Date.now()};
-    io.in(room).emit('chat', msg);
+    if(!privateRooms.includes(room)){
+      io.in(room).emit('chat', msg);
+    }
     roomsHistory[room].push(msg);
 });
 
